@@ -363,3 +363,33 @@ html:lang(en) .award-evidence::before{content:"SUPPORTING MATERIAL"}
 .sharing-motion.is-paused *{animation-play-state:paused!important}
 @media(max-width:700px){.sharing-depth text{font-size:20px}.sharing-depth text.sharing-depth-sub{font-size:13px}.sharing-motion-caption{flex-wrap:wrap;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.sharing-depth *{animation:none!important}.sharing-travel-bundle{transform:translate(380px,0)}.sharing-bundle-readable{opacity:0}.sharing-bundle-locked{opacity:1}.sharing-gate-door{transform:scaleX(.05);opacity:.1}.sharing-gate-check{opacity:1}.sharing-proof-pulse{opacity:.6;stroke-dasharray:4 10}.sharing-motion-caption button{display:none}}
+/* Live UniQdata store listing, founder profiles and team */
+.live-app{max-width:1180px;margin:0 auto 110px;padding:0 5vw}
+.live-app-heading{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:end;margin-bottom:42px}
+.live-app-heading h2,.live-app-heading h3{margin:10px 0 0;font-size:clamp(30px,4vw,54px);line-height:1.12}
+.live-app-heading em{color:var(--green);font-style:normal}
+.live-app-heading p{color:var(--muted);line-height:1.7;margin:0}
+.store-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.store-button{display:inline-flex;flex-direction:column;min-width:170px;padding:11px 20px;border:1px solid #4b6785;border-radius:12px;background:#0d1422;color:var(--ink);transition:border-color .25s,transform .25s}
+.store-button:hover,.store-button:focus-visible{border-color:var(--green);transform:translateY(-2px)}
+.store-button small{font-size:10px;letter-spacing:.06em;color:var(--muted)}
+.store-button strong{font-size:18px;line-height:1.25}
+.live-app-shots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin:0;padding:0;list-style:none}
+.live-app-shots figure{margin:0}
+.live-app-shots img{display:block;width:100%;height:auto;border-radius:18px;border:1px solid var(--line);background:#f7f9fc}
+.live-app-shots figcaption{display:grid;gap:6px;margin-top:14px;font-size:12px;line-height:1.55;color:var(--muted)}
+.live-app-shots figcaption strong{color:var(--ink);font-size:13px}
+.live-app-note{margin:26px 0 0;font-size:11px;color:var(--muted)}
+.product-detail .live-app{margin:80px 0;padding:0;max-width:none}
+.profile-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.profile-link{display:inline-flex;align-items:center;gap:10px;padding:9px 14px;border:1px solid #4b6785;border-radius:999px;font-size:12px;color:#c4d5ef;transition:border-color .25s,color .25s}
+.profile-link:hover,.profile-link:focus-visible{border-color:var(--green);color:var(--ink)}
+.team-section{max-width:1180px;margin:0 auto 100px;padding:0 5vw}
+.team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:36px 0 0;padding:0;list-style:none}
+.team-card{display:flex;flex-direction:column;gap:6px;padding:26px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.team-card small{font-size:11px;letter-spacing:.05em;color:var(--green)}
+.team-card strong{font-size:22px}
+.team-card p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.6}
+.team-card .text-link{margin:14px 0 0}
+@media(max-width:900px){.live-app-heading{grid-template-columns:1fr;gap:20px}.live-app-shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px}.live-app-shots li{flex:0 0 62%;scroll-snap-align:start}.team-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.live-app,.team-section{padding:0 16px}.team-grid{grid-template-columns:1fr}.store-button{min-width:0;flex:1}}
