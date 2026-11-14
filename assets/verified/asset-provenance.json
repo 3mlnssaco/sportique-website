@@ -1,6 +1,6 @@
 {
   "schema": "sportique.public-asset-provenance.v1",
-  "reviewed_at": "2026-09-28",
+  "reviewed_at": "2026-11-14",
   "assets": [
     {
       "public_path": "/assets/sportique-icon.jpg",
@@ -98,6 +98,51 @@
       "source_sha256": "d89bd859cf3ef69eb375bb4ff1d8aeb5df6da1cbe4a54fe28fa6261d7d8c7c62",
       "sha256": "d89bd859cf3ef69eb375bb4ff1d8aeb5df6da1cbe4a54fe28fa6261d7d8c7c62",
       "publication_note": "Digital review of lower missed-dose hold and presentation of the next pouch. Not a physical test, manufacturing release, or complete product demonstration."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-appstore-home-20260926.webp",
+      "type": "published App Store screenshot, web derivative",
+      "source": "UniQdata App Store listing (id6760312240), screenshot 1 of 5, version 1.0.18 released 2026-09-26: https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/40/83/8d/40838df2-7083-c373-c74a-413eb0d12237/1_home.png/645x1398bb.png",
+      "source_sha256": "0e7e6b5a6910a60429a0f7be7f9e37756612e26b78b4b763b37ba8aedd8a88d3",
+      "sha256": "a8cd02d8aaa951c1ef80332d8dd124f3f9417aba256346e81ba2cdc597a69ca2",
+      "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
+      "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-appstore-ai-chat-20260926.webp",
+      "type": "published App Store screenshot, web derivative",
+      "source": "UniQdata App Store listing (id6760312240), screenshot 2 of 5, version 1.0.18 released 2026-09-26: https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/eb/7b/a5/eb7ba5a3-ee40-5fea-ef9d-0cce56356df1/2_ai_chat.png/645x1398bb.png",
+      "source_sha256": "afe1792ce9b6a9de6db366c1a29a577c4ed09e26cbe22642afa11cd5a298c392",
+      "sha256": "9d929df908f93d8baa3aaa1ea74f91c4e9fa59dd49c4531246cc8368a399b91f",
+      "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
+      "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-appstore-report-20260926.webp",
+      "type": "published App Store screenshot, web derivative",
+      "source": "UniQdata App Store listing (id6760312240), screenshot 3 of 5, version 1.0.18 released 2026-09-26: https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/dc/4e/4d/dc4e4de8-9517-935b-5fcf-4b91630a9ef7/3_report.png/645x1398bb.png",
+      "source_sha256": "f8253ab248a0f441096d3dcf134e6e8d5e09c913b1155856f839c4d211fed94c",
+      "sha256": "46fdbbae3343604d30bfe70a1f28441dc5bef1b0810c1dc5bf751b0f7b8b0ad1",
+      "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
+      "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-appstore-routine-20260926.webp",
+      "type": "published App Store screenshot, web derivative",
+      "source": "UniQdata App Store listing (id6760312240), screenshot 4 of 5, version 1.0.18 released 2026-09-26: https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f6/ef/b8/f6efb881-2002-3a08-9757-1d3df672455b/4_routine.png/645x1398bb.png",
+      "source_sha256": "59cda8e8521d80f2388a8ff42238ed1480a785aebb632bf06c03b0d97b27667d",
+      "sha256": "98e895b774bd73153de5816217c10badf94622234721a8298a53bcc2508126eb",
+      "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
+      "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-appstore-checkin-20260926.webp",
+      "type": "published App Store screenshot, web derivative",
+      "source": "UniQdata App Store listing (id6760312240), screenshot 5 of 5, version 1.0.18 released 2026-09-26: https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/12/be/78/12be7823-a593-620d-8a92-39c5815fa7a6/5_checkin.png/645x1398bb.png",
+      "source_sha256": "cab07f05396769d3cf14ac85705bacefe29de81f94d0efae3374f50a653ddbd1",
+      "sha256": "20f9dfe4c26cc3ad23b6a9e2c803ff9e31b6209af700da0020416e759a082f0e",
+      "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
+      "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
     }
   ],
   "blocked_assets": [
