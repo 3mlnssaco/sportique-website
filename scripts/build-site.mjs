@@ -34,16 +34,8 @@ const founderProfiles=[
  ['App Store · SportiQue','https://apps.apple.com/kr/developer/sportique/id1882492724'],
 ];
 const profileLinks=founderProfiles.filter(([,url])=>url).map(([name,url])=>`<a class="profile-link" href="${url}" target="_blank" rel="noopener noreferrer">${name} ${arrow}</a>`).join('');
-// Team as shown in the 2026-11 IR deck; names and roles only, external links once each member confirms one.
-const team=[
- {name:'이승헌',role:'Founder, CEO & CTO',body:'제품 방향, 앱·서버·AI 구현, 기관 협업',href:'/founder/'},
- {name:'손준',role:'Product Designer',body:'제품 UX·UI와 웹 디자인'},
- {name:'조이환',role:'Marketing Lead',body:'AI 콘텐츠 마케팅과 브랜드 채널 운영'},
- {name:'김지연',role:'Global Marketing Advisor',body:'UniQdata 글로벌 마케팅 자문'},
- {name:'최유민',role:'현장 연구 · 기관 협력',body:'몽골 기관 협력과 연구 조건 검토'},
- {name:'김형태',role:'의료 자문',body:'성형외과 전문의 · 의료 자문'},
-];
-const teamSection=`<section class="team-section" id="team" aria-labelledby="team-title"><div class="section-heading"><div><p class="eyebrow">TEAM / 함께 만드는 사람들</p><h2 id="team-title">개발·디자인·마케팅,<br><em>현장 연구와 의료 자문.</em></h2></div></div><ul class="team-grid">${team.map(m=>`<li class="team-card"><small>${m.role}</small><strong>${m.name}</strong><p>${m.body}</p>${m.href?`<a class="text-link" href="${m.href}">대표 프로필 ${arrow}</a>`:''}${m.links?m.links.map(([n,u])=>`<a class="profile-link" href="${u}" target="_blank" rel="noopener noreferrer">${n} ${arrow}</a>`).join(''):''}</li>`).join('')}</ul></section>`;
+// SportiQue is presented as a solo-founder company; the founder block links to the same public profiles.
+const teamSection=`<section class="team-section" id="team" aria-labelledby="team-title"><div class="section-heading"><div><p class="eyebrow">FOUNDER / 만든 사람</p><h2 id="team-title">제품부터 기술까지,<br><em>창업자가 직접 만듭니다.</em></h2></div></div><div class="team-founder"><div><small>Founder, CEO &amp; CTO</small><strong>이승헌</strong><p>SportiQue를 혼자 창업해 UniQdata의 제품 방향, 앱·서버·AI 구현, 기관 협업을 직접 이끌고 있습니다.</p><a class="text-link" href="/founder/">대표 프로필 ${arrow}</a></div><div class="profile-links" aria-label="외부 프로필">${profileLinks}</div></div></section>`;
 // Only provenance-reviewed source media belong here; hardware media keeps its design-review boundary.
 const media={
  uniqdata:productValueVisual('uniqdata'),

@@ -26,10 +26,13 @@ test('founder page links to public external profiles',()=>{
  }
 });
 
-test('company page introduces the team without private contact details',()=>{
- const about=read('about/index.html'), en=read('en/about/index.html');
- for(const name of ['이승헌','손준','조이환','김지연','최유민','김형태'])assert.ok(about.includes(`<strong>${name}</strong>`),name);
- assert.equal((en.match(/class="team-card"/g)||[]).length,6);
- assert.ok(about.includes('href="/founder/"'));
- assert.doesNotMatch(about.slice(about.indexOf('team-section'),about.indexOf('company-facts')),/010-|@|tel:/);
+test('company page presents SportiQue as a solo-founder company with public profile links',()=>{
+ for(const prefix of ['', 'en/']){
+  const about=read(prefix+'about/index.html');
+  const section=about.slice(about.indexOf('class="team-section"'),about.indexOf('class="company-facts"'));
+  assert.ok(section.includes('class="team-founder"'),prefix);
+  for(const url of ['https://www.linkedin.com/in/seunghun-daniel-lee/','https://github.com/3mlnssaco',`${prefix?'/en':''}/founder/`])assert.ok(section.includes(`href="${url}"`),prefix+url);
+  for(const name of ['손준','조이환','김지연','최유민','김형태','Jun Son','Ihwan Jo'])assert.ok(!about.includes(name),name);
+  assert.doesNotMatch(section,/010-|tel:/);
+ }
 });
