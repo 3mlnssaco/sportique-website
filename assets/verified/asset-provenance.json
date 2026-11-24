@@ -156,9 +156,9 @@
     {
       "public_path": "/assets/verified/uniqdata-next-routine-20261124.png",
       "type": "next-version design reference screen (not a screenshot of the released app)",
-      "source": "UniQdata app screen design reference file, Routine frame, exported at 1x on 2026-11-24",
-      "sha256": "0e67f08663b93b8be46d1c3203adaff44e41c52e091122b914983dce89b02cbd",
-      "transformation": "PNG export at 1x (375 px wide); no pixel edits.",
+      "source": "UniQdata app screen design reference file, a copy of the Routine frame made for publication, exported at 1x on 2026-11-24",
+      "sha256": "33800395a9e15c654fc2017ec0ae083b1fe310220d8865b056257f6be20b030b",
+      "transformation": "In the copy of the frame, the named medication in the example list was replaced with a generic label before export. PNG export at 1x (375 px wide); no pixel edits.",
       "publication_note": "Design of the next version, which is not released. It is not a capture of the released app and differs from the version in the stores (1.0.18). Names and values shown on the screen are examples.",
       "privacy_review": "Design file content with example names and values; no real user record, account identifier or credential visible."
     },
