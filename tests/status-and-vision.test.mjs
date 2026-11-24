@@ -155,3 +155,26 @@ test('the status helper knows four words and only "서비스 중" is live', asyn
   assert.throws(() => statusTag('운영 중'));
   assert.equal(count(statusTag('계획'), /tag-dot/g), 0);
 });
+
+test('the home network section states the hourly evidence record once, as a live fact under a planned heading', () => {
+  const sentences = {
+    ko: '동의와 이용 이력의 증빙은 한 시간마다 XRPL 메인넷에 기록합니다. 건강기록 원문은 올리지 않습니다.',
+    en: 'Evidence of consent and use history is recorded on the XRPL mainnet every hour. Original health records are not uploaded.',
+  };
+  for (const { prefix, lang } of languages) {
+    const home = read(fileOf(prefix, ''));
+    const world = block(home, 'id="world"');
+    assert.equal(count(world, /class="ledger-fact"/g), 1, prefix);
+    const fact = block(world, 'class="ledger-fact"');
+    assert.deepEqual(marks(fact), [mark('서비스 중', lang)], prefix);
+    assert.equal(visibleText(fact.match(/<p>([^<]*)<\/p>/)[1]), visibleText(sentences[lang]), prefix);
+    const at = world.indexOf('class="ledger-fact"');
+    assert.ok(world.lastIndexOf('</p>', at) > world.indexOf('<h2'), `${prefix} after the section paragraph`);
+    assert.ok(at < world.indexOf('/vision/'), `${prefix} before the vision link`);
+    assert.deepEqual(marks(block(world, 'class="name-line"')), [{ label: said('네트워크', lang), live: false }, mark('계획', lang)], `${prefix} heading stays planned`);
+    assert.equal(count(visibleText(home), new RegExp(sentences[lang].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')), 1, `${prefix} once`);
+    const plain = visibleText(fact);
+    for (const word of ['보상', '코인', '토큰', '지갑', 'reward', 'coin', 'token', 'wallet']) assert.ok(!plain.toLowerCase().includes(word), `${prefix} ${word}`);
+    assert.ok(!/XRP(?!L)/.test(plain), `${prefix} bare XRP`);
+  }
+});
