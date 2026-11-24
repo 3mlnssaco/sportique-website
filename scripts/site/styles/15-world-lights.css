@@ -1,0 +1,67 @@
+/* 15-world-lights: the dot map where only the countries the service has reached are lit
+   (markup: scripts/site/world-lights.mjs, drawing: assets/world-lights-20261124.js).
+   Wide screens: a name tag beside each lit country (placed by the script). Narrow screens and no-script: the legend
+   and the list of lit countries under the map. */
+.world-lights { position: relative; width: min(1240px, calc(100% - 24px)); margin-inline: auto; }
+.world-lights canvas { display: block; width: 100%; aspect-ratio: 200 / 79; }
+/* No grid or no 2D context: the caption stands on its own. */
+.world-lights[data-world-lights="unavailable"] canvas { display: none; }
+
+.world-lights figcaption {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 32px;
+  margin-top: 18px; color: var(--muted, #8b97ad); font-size: 13px; line-height: 1.5; text-align: start;
+}
+.world-lights-legend, .world-lights-list { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
+.world-lights-legend li { display: flex; align-items: center; gap: 9px; }
+.world-lights-list li { display: flex; align-items: baseline; gap: 8px; }
+.world-lights-list b { color: var(--ink, #edf3ff); font-weight: 600; }
+/* Legend marks: a lit dot and a dot still to light (a little stronger than on the map so the small mark reads). */
+.world-lights-dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: rgba(137, 152, 180, .45); }
+.world-lights-dot--lit { background: var(--mint, #6ff1ae); box-shadow: 0 0 0 4px rgba(111, 241, 174, .16); }
+@media (forced-colors: active) {
+  .world-lights-dot { background: GrayText; }
+  .world-lights-dot--lit { background: Highlight; }
+  .world-lights canvas { forced-color-adjust: none; background: #05060a; }
+}
+
+/* Name tag beside a lit country: hidden until the country lights, then fades in; the thin line runs to the country. */
+.world-lights-pin {
+  position: absolute; z-index: 1; left: 0; top: 0; display: none; align-items: baseline; gap: 8px;
+  padding: 8px 12px; border: 1px solid rgba(237, 243, 255, .18); border-radius: 10px;
+  background: rgba(11, 15, 24, .88); color: var(--muted, #8b97ad);
+  font-size: 13px; line-height: 1.4; text-align: start; white-space: nowrap; pointer-events: none;
+  opacity: 0; transform: translateY(-100%);
+}
+.world-lights-pin b { color: var(--ink, #edf3ff); font-weight: 600; }
+.world-lights-pin span { color: var(--mint, #6ff1ae); }
+.world-lights-pin.is-on { opacity: 1; }
+.world-lights-pin::before {
+  content: ""; position: absolute; left: 3px; bottom: 3px; width: var(--lead, 43.8px); height: 1px;
+  background: rgba(237, 243, 255, .35); transform-origin: 0 50%; transform: rotate(var(--lead-angle, 135deg));
+}
+.world-lights-pin.is-left::before { left: calc(100% - 3px); transform: rotate(var(--lead-angle, 45deg)); }
+@media (prefers-reduced-motion: no-preference) {
+  .world-lights-pin { transition: opacity .3s ease; }
+}
+@media (min-width: 760px) {
+  .world-lights[data-world-lights="on"] .world-lights-pin { display: flex; }
+  /* The tags say the same; the list stays for screen readers only. */
+  .world-lights[data-world-lights="on"] .world-lights-list {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+}
+
+/* Bubble the script adds when a country is pointed at; it stays inside the map. */
+.world-lights-tip {
+  position: absolute; z-index: 2; left: 0; top: 0; display: flex; align-items: baseline; gap: 8px;
+  max-width: calc(100% - 8px); padding: 7px 11px; border: 1px solid rgba(237, 243, 255, .18); border-radius: 10px;
+  background: #0b0f18; box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  color: var(--muted, #8b97ad); font-size: 13px; line-height: 1.4; text-align: start; white-space: nowrap; pointer-events: none;
+}
+.world-lights-tip[hidden], .world-lights-tip b[hidden] { display: none; }
+.world-lights-tip b { color: var(--ink, #edf3ff); font-weight: 600; }
+
+@media (max-width: 600px) {
+  .world-lights figcaption { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

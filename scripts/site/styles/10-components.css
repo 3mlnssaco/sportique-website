@@ -1,0 +1,92 @@
+/* 10-components: pieces built by scripts/site/ui.mjs (tag, button, link, section head, tile, app shot). */
+
+/* Tag: one per section, above the heading. */
+.tag {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+  border: 1px solid var(--line); border-radius: var(--r-pill);
+  color: var(--ink-2); font-size: 13px; font-weight: 600; line-height: 1.4;
+}
+.tag-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
+
+/* Buttons: 52px pills. Hover changes colour only; the arrow circle moves 2px. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 52px; padding: 8px 24px; border: 1px solid transparent; border-radius: var(--r-pill);
+  font-size: 15px; font-weight: 650; line-height: 1.3; text-align: center;
+}
+.btn--primary { background: var(--ink); color: var(--bg); }
+.btn--primary:hover { background: #fff; }
+.btn--primary.btn--arrow { padding-right: 8px; }
+.btn--primary .btn-arrow {
+  flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg); color: var(--ink); font-size: 15px;
+}
+.btn--primary:hover .btn-arrow { transform: translateX(2px); }
+.btn--ghost { border-color: var(--line-2); background: transparent; color: var(--ink); }
+.btn--ghost:hover { border-color: rgba(237, 243, 255, .45); }
+.btn--ghost.btn--arrow { gap: 8px; }
+
+.link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--ink-2); font-size: 15px; font-weight: 500; }
+.link:hover { color: var(--ink); }
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+
+/* Section head: tag + heading, with the lead beside it on wide screens. */
+.head { display: grid; gap: 24px; margin-bottom: clamp(40px, 5vw, 72px); }
+.head-main { display: grid; gap: 20px; justify-items: start; }
+.head-side { display: grid; gap: 24px; justify-items: start; max-width: 620px; }
+
+/* Two columns: statement left, supporting list right. */
+.split { display: grid; gap: 40px; }
+.split-main { display: grid; gap: 20px; justify-items: start; }
+.split-main > p:not(.tag) { max-width: 560px; }
+
+@media (min-width: 901px) {
+  .head--split, .split { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--split-gap); align-items: end; }
+}
+
+/* Tile: one bordered surface with an optional thin bar. Never nested. */
+.tile {
+  border: 1px solid var(--line); border-radius: var(--r-tile);
+  background: linear-gradient(180deg, rgba(237, 243, 255, .04), rgba(237, 243, 255, .012));
+  overflow: hidden;
+}
+.tile-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  height: 40px; padding: 0 16px; border-bottom: 1px solid var(--line);
+  color: var(--muted); font-size: 12px; line-height: 1;
+}
+.tile--link { position: relative; display: grid; gap: 10px; align-content: start; padding: 28px 64px 30px 28px; }
+.tile--link:hover { border-color: var(--line-2); }
+.tile-mark { position: absolute; top: 26px; right: 28px; color: var(--ink-2); font-size: 18px; line-height: 1.35; }
+.tile--link:hover .tile-mark { color: var(--ink); }
+
+/* Store buttons */
+.store-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.store-button {
+  display: grid; align-content: center; gap: 3px; min-width: 148px; height: 52px; padding: 0 18px;
+  border: 1px solid var(--line-2); border-radius: 14px; color: var(--ink); line-height: 1;
+}
+.store-button:hover { border-color: rgba(237, 243, 255, .45); }
+.store-button small { color: var(--muted); font-size: 11px; font-weight: 500; }
+.store-button strong { font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+
+/* Phone frame (phone() in ui.mjs): the exported screens have no device bezel, so it is drawn here. Tall screens show their top part only. */
+.phone {
+  position: relative; aspect-ratio: 375 / 812; padding: 2.7%; border-radius: 13.5% / 6.3%;
+  background: #0b0d12;
+  box-shadow: inset 0 0 0 1px rgba(237, 243, 255, .18), 0 26px 44px rgba(0, 0, 0, .6);
+  overflow: hidden;
+}
+.phone img {
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 11% / 5.1%;
+  /* Tall screens are cut wherever the frame ends, so the last part fades out instead of slicing a row of text. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 76%, transparent 99%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .btn-arrow, .link, .tile--link, .tile-mark, .store-button, .language-switch, .header-login, .site-nav a, .footer-nav a, .footer-mail, .motion-toggle {
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+  }
+}

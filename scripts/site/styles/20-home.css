@@ -1,0 +1,89 @@
+/* 20-home: sections of the home page (scripts/site/pages/home.mjs), top to bottom. */
+
+/* First screen: centred statement, then the world map piece (styled in its own fragment). */
+.hero { padding: clamp(64px, 9vh, 120px) 0 calc(var(--section) / 2); text-align: center; }
+.hero-inner { display: grid; justify-items: center; }
+.hero h1 { margin-top: 24px; font-size: clamp(40px, 6.2vw, 84px); line-height: 1.08; }
+.hero .lead { max-width: 620px; margin-top: 24px; }
+.hero .actions { justify-content: center; margin-top: 36px; }
+/* The map is pulled up under the text so the continents, not the empty north, are on the first screen;
+   only the canvas fades at its top, so the name tag and the bubble stay clear. Text and buttons sit above it. */
+.hero-inner { position: relative; z-index: 2; pointer-events: none; }
+.hero-inner > * { pointer-events: auto; }
+.hero-world { position: relative; width: min(1240px, 100% - 24px); margin: clamp(-150px, -9.5vw, -64px) auto 0; }
+.hero-world canvas {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 26%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 26%);
+}
+/* 760-1279px: the name tag would sit on the hero buttons, so the list under the map is shown instead. */
+@media (min-width: 760px) and (max-width: 1279px) {
+  .hero-world .world-lights[data-world-lights="on"] .world-lights-pin { display: none; }
+  .hero-world .world-lights[data-world-lights="on"] .world-lights-list {
+    position: static; width: auto; height: auto; margin: 0; overflow: visible;
+    clip: auto; clip-path: none; white-space: normal;
+  }
+}
+@media (max-width: 700px) {
+  .hero-world { margin-top: -20px; }
+  .hero-world canvas {
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 14%);
+  }
+}
+
+/* Network: three principles as ruled lines. */
+.rules { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.rules li { padding: 20px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 18px; font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+
+/* What opens: seven uses as a ruled two-column list. */
+.pairs { display: grid; column-gap: var(--split-gap); margin: 0; padding: 0; list-style: none; }
+.pairs li { display: grid; gap: 8px; align-content: start; padding: 26px 0; border-top: 1px solid var(--line); }
+.pairs + .note { padding-top: 22px; border-top: 1px solid var(--line); }
+@media (min-width: 901px) {
+  .pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Products: one large UniQdata tile, then two small ones. */
+.product-tile { --pad: clamp(24px, 5vw, 64px); display: grid; margin-top: 24px; }
+.product-copy { display: grid; gap: 22px; justify-items: start; padding: var(--pad) var(--pad) 0; }
+.product-copy h2 { font-size: clamp(28px, 3.3vw, 44px); }
+.product-copy p { max-width: 520px; }
+/* Two phones side by side, cut a little by the tile's bottom edge. */
+.product-shots {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px);
+  width: min(440px, 100%); margin: 0 auto calc(-1 * clamp(36px, 5vw, 64px)); padding: 40px var(--pad) 0;
+}
+/* The label sits above the phones, because the tile's bottom edge cuts them. */
+.product-shots-note { grid-column: 1 / -1; margin-bottom: -4px; text-align: center; text-wrap: balance; }
+@media (min-width: 901px) {
+  .product-tile { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: end; }
+  .product-copy { align-self: center; padding: var(--pad) clamp(24px, 3vw, 40px) var(--pad) var(--pad); }
+  .product-shots { width: 100%; padding: clamp(32px, 4vw, 56px) var(--pad) 0 0; }
+}
+.subhead { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin: clamp(56px, 7vw, 96px) 0 24px; }
+.duo { display: grid; gap: 16px; }
+@media (min-width: 701px) {
+  .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+
+/* Story: where it started (left) and the 2025 demo (right). */
+.story { display: grid; gap: 48px; }
+.story-main { display: grid; gap: 20px; justify-items: start; }
+.story-main h2 { margin-bottom: 8px; }
+.story-main p { max-width: 600px; }
+.story-side { display: grid; gap: 14px; justify-items: start; padding-top: 32px; border-top: 1px solid var(--line); }
+.year { color: var(--ink-2); font-size: 13px; font-weight: 600; line-height: 1.6; font-variant-numeric: tabular-nums; }
+@media (min-width: 901px) {
+  .story { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--split-gap); align-items: end; }
+  .story-side { padding: 4px 0 4px clamp(24px, 3.4vw, 44px); border-top: 0; border-left: 1px solid var(--line); }
+}
+
+/* Collaboration: centred close, with the general contact lines underneath. */
+.closing { text-align: center; }
+.closing-inner { display: grid; justify-items: center; gap: 22px; }
+.closing-inner > h2 { margin-bottom: 6px; }
+.closing .lead { max-width: 680px; }
+.closing .actions { justify-content: center; }
+.closing-inner > .actions { margin-top: 14px; }
+.closing-more { display: grid; justify-items: center; gap: 14px; margin-top: clamp(56px, 7vw, 96px); }
+.closing-more p { max-width: 480px; }
