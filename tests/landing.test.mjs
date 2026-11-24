@@ -425,7 +425,7 @@ test('awards swap the Mongolia visit and incorporation cards while preserving th
 });
 
 test('legal and medical qualifiers stay on the pages they qualify, in Korean and in English', () => {
-  const exampleScreens = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+  const exampleScreens = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
   const notDiagnosis = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
   const sharingDesign = ['SportiQue의 공유 아키텍처는 개인의 기록 보관, 동의와 권한, 블록체인 기반 증빙 검증을 분리합니다. 건강기록 원문과 복호화 키를 공개 원장에 올리는 방식이 아닙니다.', '수신자의 권한과 키를 확인하고, 허용된 범위의 암호화 전달을 연결하는 설계입니다.'];
   const studyAccess = 'UniQLab.io에서는 참여자가 동의한 연구 목적과 범위 안에서 기록을 연결합니다. 기관 계정만으로 개인 기록에 접근할 수 있는 것은 아닙니다.';
