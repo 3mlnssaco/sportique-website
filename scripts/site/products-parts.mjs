@@ -1,6 +1,12 @@
 // Pieces the product list (pages/products.mjs) and the product details (pages/product-detail.mjs) share.
 // Korean text is the original text from scripts/build-site.mjs (productSharing, sharingContexts), unchanged.
-import { esc, lines, tag, head, section, rows } from './ui.mjs';
+import { esc, lines, tag, statusTag, head, section, rows } from './ui.mjs';
+
+// Status next to each product's name, and the one feature that is only planned.
+export const productStatus = { uniqdata: '서비스 중', uniqlab: '개발 중', bodab: '준비 중' };
+const planned = new Set(['진료 전 질문 준비', '가족 공유 범위 선택']);
+export const featureItem = text => (planned.has(text) ? `<li class="with-status"><span>${esc(text)}</span>${statusTag('계획')}</li>` : `<li>${esc(text)}</li>`);
+
 
 export const sharingContexts = {
   uniqdata: 'UniQdata.io에서는 개인이 자신의 기록을 관리하고, 누구에게 어떤 기록을 공유할지 선택합니다.',

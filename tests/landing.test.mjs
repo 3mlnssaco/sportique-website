@@ -26,7 +26,8 @@ test('home leads with the UniQdata statement and keeps every company route, the 
   // three equal link tiles with the same structure and no pictures.
   const products = block(home, 'id="products"');
   assert.match(products, twoLines('하나의 기록,', '활용은 자유롭게.'));
-  assert.equal(count(products, /<a class="tile tile--link" href="\/products\/(?:uniqdata|uniqlab|bodab)\/"><h3>[^<]+<\/h3><p>[^<]+<\/p><span class="tile-mark" aria-hidden="true">↗<\/span><\/a>/g), 3);
+  assert.equal(count(products, /<a class="tile tile--link" href="\/products\/(?:uniqdata|uniqlab|bodab)\/"><div class="name-line"><h3>[^<]+<\/h3><p class="tag">(?:<span class="tag-dot" aria-hidden="true"><\/span>)?[^<]+<\/p><\/div><p>[^<]+<\/p><span class="tile-mark" aria-hidden="true">↗<\/span><\/a>/g), 3);
+  assert.equal(count(products, /<div class="tile tile--link tile--static">/g), 1, 'the fourth tile is the sub-app and SDK tile, not a link');
   assert.deepEqual([...products.matchAll(/<a class="tile tile--link" href="([^"]+)"/g)].map(match => match[1]), ['/products/uniqdata/', '/products/uniqlab/', '/products/bodab/']);
   assert.ok(products.includes('href="/products/"'));
   assert.doesNotMatch(products, /<(?:img|canvas|video|picture|svg)\b|class="phone"/, 'the product tiles carry no picture');
@@ -98,8 +99,8 @@ test('care story starts from the family problem', () => {
 
 test('home defines scattered records as the problem and leaves the choice of AI and sharing with the individual', () => {
   // Order of the new home. The world section moved up next to the map in the first screen, and the 2025 demo now follows
-  // the care story inside one section; the rest keeps the old order: problem, system, uses, products, story.
-  const order = ['id="hero-title"', 'id="world"', 'id="uniqdata-app"', 'id="research"', 'id="problem"', 'id="system"', 'id="value"', 'id="products"', 'id="products-title"', 'id="story"', 'id="care-title"', 'id="journey-title"', 'id="collaboration"'];
+  // the care story inside one section. The vision section follows the world; the app and the study flow come after the products.
+  const order = ['id="hero-title"', 'id="world"', 'id="shift"', 'id="problem"', 'id="system"', 'id="value"', 'id="products"', 'id="products-title"', 'id="uniqdata-app"', 'id="research"', 'id="story"', 'id="care-title"', 'id="journey-title"', 'id="collaboration"'];
   let last = -1;
   for (const marker of order) { const at = home.indexOf(marker); assert.ok(at > last, marker); last = at; }
   // The old English caps label "DATA FRAGMENTATION" is gone; the section says it in its own heading.
@@ -109,7 +110,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
   const system = block(home, 'id="system"');
   const steps = [...block(system, '<ol').matchAll(/<li>([\s\S]*?)<\/li>/g)].map(match => visibleText(match[1]));
   assert.equal(steps.length, 3);
-  for (const [index, start] of ['1 DataQ 형식을 표준화합니다.', '2 UniQdata 개인 DB로 쌓습니다.', '3 선택 AI·공유를 선택합니다.'].entries()) assert.ok(steps[index].startsWith(start), steps[index]);
+  for (const [index, start] of ['1 DataQ 개발 중 형식을 표준화합니다.', '2 UniQdata 서비스 중 개인 DB로 쌓습니다.', '3 선택 개발 중 AI·공유를 선택합니다.'].entries()) assert.ok(steps[index].startsWith(start), steps[index]);
   assert.doesNotMatch(system, /confirm/i);
   assert.ok(!home.includes('다시 입력하지'));
   assert.ok(visibleText(block(home, 'id="products-title"')).includes('자유'));
@@ -117,7 +118,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
 });
 
 test('assembled records open the full personal-use path without converting research compensation into a SportiQue payout claim', () => {
-  for (const text of ['개인은 기록을 리포트로 확인합니다.', '개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '보호자에게 필요한 기록만 공유합니다.', '해외에서도 필요한 기록을 꺼내 씁니다.', '참여할 연구와 공유할 기록을 고릅니다.', '돌봄·복약 앱에 기록을 연결합니다.', '이용 이력을 다시 확인합니다.', '지급 주체가 정한 방식으로 처리', '국가별 정책·데이터 레지던시 조건']) assert.ok(home.includes(text), text);
+  for (const text of ['개인은 기록을 리포트로 확인합니다.', '쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.', '개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.', '보호자에게 필요한 기록만 공유합니다.', '해외에서도 필요한 기록을 꺼내 씁니다.', '참여할 연구와 공유할 기록을 고릅니다.', '돌봄·복약 앱에 기록을 연결합니다.', '이용 이력을 다시 확인합니다.', '지급 주체가 정한 방식으로 처리', '국가별 정책·데이터 레지던시 조건']) assert.ok(home.includes(text), text);
   for (const rejected of ['데이터 판매', '토큰 보상', 'SportiQue가 직접 지급']) assert.ok(!home.includes(rejected), rejected);
 });
 
@@ -240,7 +241,7 @@ test('each product on the list links to its own detail page, and each detail giv
     for (const value of [product.description, product.detail, ...product.features]) assert.ok(detail.includes(escapeHtml(value)), value);
     assert.ok(detail.includes('href="/products/"'));
   }
-  assert.ok(read('products/bodab/index.html').includes('Bodab Senior에서 별도로 설명합니다'));
+  assert.ok(read('products/bodab/index.html').includes('지금은 준비 중이라 스토어에서 내려받을 수 없습니다'));
   const institution = read('institutions/index.html');
   assert.ok(institution.includes('https://org.sportique.biz/onboarding'));
   assert.ok(institution.includes('https://org.sportique.biz/workspace'));
@@ -434,8 +435,8 @@ test('legal and medical qualifiers stay on the pages they qualify, in Korean and
     '': [exampleScreens, notDiagnosis, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
     'products/': [exampleScreens, notDiagnosis, ...sharingDesign, studyAccess, familyAccess, '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.'],
     'products/uniqdata/': [exampleScreens, notDiagnosis, ...sharingDesign],
-    'products/uniqlab/': [...sharingDesign, studyAccess, '연구팀과 기관을 위한 운영 도구입니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.'],
-    'products/bodab/': [...sharingDesign, familyAccess, 'Bodab은 개인이 쓰는 어르신용 앱입니다. 기관의 돌봄 요청·담당자 배정 업무는 Bodab Senior에서 별도로 설명합니다.'],
+    'products/uniqlab/': [...sharingDesign, studyAccess, '연구팀과 기관을 위한 운영 도구로 개발하고 있습니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.'],
+    'products/bodab/': [...sharingDesign, familyAccess, 'Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다. 기관의 돌봄 요청·담당자 배정 업무는 이 앱의 범위가 아닙니다.'],
     'products/uniqdata/now/': ['모든 숫자는 서버가 센 실제 값이에요. 개인을 알아볼 수 있는 정보는 없어요.'],
     'about/': ['대학·연구기관·기업이 보유한 자료와 기록 수집 업무를 확인하고, 개인의 동의와 기존 운영 환경에 맞는 적용을 함께 준비합니다. 현장별 범위와 연동 가능성은 협의와 실증으로 확인합니다.', '몽골의 대학·연구 환경을 대상으로 자료 정리와 연구 운영 실증을 준비하는 적용안을 만들고 있습니다. 실제 운영과 확대 범위는 실증에서 확인할 과제입니다.', '연구에서 생긴 개인 기록도 다시 개인에게 돌아오고, 다음 활용은 새로운 동의에서 시작하는 방향을 지향합니다. 국가별 적용은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
     'vision/': ['연결의 방향을 보여 주는 비전 시각화입니다. 국가별 제공은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
@@ -492,10 +493,10 @@ function assertFlow(html, lang, where) {
   assert.doesNotMatch(list, /<(?:img|canvas|video|picture|svg)\b/, `${where}: the flow is words only`);
 }
 
-test('home shows the study flow between the app and the problem, with UniQLab marked as in development', () => {
+test('home shows the study flow after the app, below the products, with UniQLab marked as in development', () => {
   for (const { prefix, lang } of languages) {
     const page = read(fileOf(prefix, ''));
-    assert.ok(page.indexOf('id="uniqdata-app"') < page.indexOf('id="research"') && page.indexOf('id="research"') < page.indexOf('id="problem"'), `${prefix}home: order`);
+    assert.ok(page.indexOf('id="products"') < page.indexOf('id="uniqdata-app"') && page.indexOf('id="uniqdata-app"') < page.indexOf('id="research"') && page.indexOf('id="research"') < page.indexOf('id="story"'), `${prefix}home: order`);
     const research = block(page, 'id="research"');
     assert.match(research, twoLines(said('연구기관은 UniQLab에서,', lang).replaceAll('&amp;', '&'), said('개인은 UniQdata에서.', lang).replaceAll('&amp;', '&')));
     assertFlow(research, lang, `${prefix}home`);

@@ -1,8 +1,8 @@
 // Product list /products/ (2026-11-24 design). Korean text is the original from build-site.mjs
 // (productCards, liveApp, the old products hero) and public-records.json, unchanged.
-import { esc, lines, tag, head, section, link, storeButtons, appTile, pageHero, cta, researchFlow, researchFlowNote } from '../ui.mjs';
+import { esc, lines, tag, statusTag, head, section, link, storeButtons, appTile, pageHero, cta, researchFlow, researchFlowNote } from '../ui.mjs';
 import { data } from '../data.mjs';
-import { listSharing } from '../products-parts.mjs';
+import { listSharing, productStatus, featureItem } from '../products-parts.mjs';
 
 const hero = pageHero({
   tag: '제품',
@@ -17,7 +17,7 @@ const app = section({
 
 const product = p => section({
   id: p.id, label: `${p.id}-title`, className: 'product-block',
-  body: `<div class="split split--top"><div class="split-main">${tag(p.label)}<h2 id="${p.id}-title">${esc(p.name)}</h2><p class="lead">${esc(p.description)}</p><p>${esc(p.detail)}</p><a class="link" href="/products/${p.id}/" aria-label="${esc(p.name)} 상세 보기">상세 보기 <span aria-hidden="true">↗</span></a></div><div class="split-side"><ul class="feature-rows">${p.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>${p.modules.length ? `<p class="note">${p.modules.map(esc).join(' · ')}</p>` : ''}${p.id === 'uniqlab' ? '<p class="note">개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.</p>' : ''}</div></div>${p.id === 'uniqlab' ? `<h3 class="h2-sm flow-title" id="flow-title-list">연구가 진행되는 순서</h3>${researchFlow()}<p class="note">${esc(researchFlowNote)}</p>` : ''}`,
+  body: `<div class="split split--top"><div class="split-main">${tag(p.label)}<div class="name-line"><h2 id="${p.id}-title">${esc(p.name)}</h2>${statusTag(productStatus[p.id])}</div><p class="lead">${esc(p.description)}</p><p>${esc(p.detail)}</p><a class="link" href="/products/${p.id}/" aria-label="${esc(p.name)} 상세 보기">상세 보기 <span aria-hidden="true">↗</span></a></div><div class="split-side"><ul class="feature-rows">${p.features.map(f => `${featureItem(f)}`).join('')}</ul>${p.modules.length ? `<p class="note">${p.modules.map(esc).join(' · ')}</p><div class="note-status">${statusTag('계획')}</div>` : ''}${p.id === 'uniqlab' ? '<p class="note">개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.</p>' : ''}</div></div>${p.id === 'uniqlab' ? `<h3 class="h2-sm flow-title" id="flow-title-list">연구가 진행되는 순서</h3>${researchFlow()}<p class="note">${esc(researchFlowNote)}</p>` : ''}`,
 });
 
 export default {
