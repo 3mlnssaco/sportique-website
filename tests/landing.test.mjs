@@ -22,12 +22,14 @@ test('home leads with the UniQdata statement and keeps every company route, the 
   // The old caption "기록은 한곳에, 활용과 공유의 선택은 개인에게" left with the concept diagram; the statement itself is the title and the h1.
   assert.ok(home.includes('<title>SportiQue — 건강기록은 한곳에, 선택은 개인에게</title>'));
   assert.match(firstScreen, twoLines('건강기록은 한곳에.', '선택은 개인에게.'));
-  // The old check asked for the UniQdata concept diagram here. UniQdata is now shown by its heading, its site link and two next-version screens, labelled as such.
+  // The big UniQdata tile with two phones is gone (the app section above already shows the screens). The product section is
+  // three equal link tiles with the same structure and no pictures.
   const products = block(home, 'id="products"');
-  assert.match(products, twoLines('개인 건강기록의', '현재 시작점, UniQdata.'));
-  assert.ok(products.includes('href="https://uniqdata.io/"'));
-  assert.deepEqual(images(products), ['/assets/verified/uniqdata-next-connect-20261124.png', '/assets/verified/uniqdata-next-report-20261124.png']);
-  assert.ok(products.includes('>준비 중인 다음 버전의 화면입니다. 화면 속 이름과 수치는 예시입니다.</p>'), 'the tile labels its screens as next-version screens and as examples');
+  assert.match(products, twoLines('하나의 기록,', '활용은 자유롭게.'));
+  assert.equal(count(products, /<a class="tile tile--link" href="\/products\/(?:uniqdata|uniqlab|bodab)\/"><h3>[^<]+<\/h3><p>[^<]+<\/p><span class="tile-mark" aria-hidden="true">↗<\/span><\/a>/g), 3);
+  assert.deepEqual([...products.matchAll(/<a class="tile tile--link" href="([^"]+)"/g)].map(match => match[1]), ['/products/uniqdata/', '/products/uniqlab/', '/products/bodab/']);
+  assert.ok(products.includes('href="/products/"'));
+  assert.doesNotMatch(products, /<(?:img|canvas|video|picture|svg)\b|class="phone"/, 'the product tiles carry no picture');
   for (const retired of ['/assets/verified/uniqdata-home-dev-20260916.png', '/assets/verified/uniqdata-screen-20260922.webp', '/assets/generated/personal-data-vault-v1.png', 'class="assembly-links"', 'class="record-fragment"', 'hero-3d-phase', 'class="world-hero"', 'id="footprint-map"', 'holo-stage', 'value-visual', 'value-diagram']) assert.ok(!home.includes(retired), retired);
   assert.ok(!exists('assets/generated/personal-data-vault-v1.png'));
   assert.ok(home.includes('id="world"'));
@@ -35,8 +37,9 @@ test('home leads with the UniQdata statement and keeps every company route, the 
 });
 
 test('first screen states the personal benefit without a 3D network scene, a scroll listener or more than one screen of height', () => {
-  for (const text of ['건강기록은 한곳에.', '선택은 개인에게.', '그 시작이 UniQdata입니다.', '왜 필요한가요?']) assert.ok(firstScreen.includes(text), text);
+  for (const text of ['건강기록은 한곳에.', '선택은 개인에게.', '그 시작이 UniQdata입니다.', 'UniQLab 흐름 보기']) assert.ok(firstScreen.includes(text), text);
   assert.ok(!firstScreen.includes('DataQ'));
+  assert.match(firstScreen, /<a class="btn btn--ghost btn--arrow" href="#research">UniQLab 흐름 보기 <span class="btn-arrow" aria-hidden="true">↓<\/span><\/a>/);
   assert.doesNotMatch(firstScreen, /hero-network|class="hero-scene"|hero-flow|data-reveal|data-personal-network|hero-3d/);
   // The old rule was "no canvas in the first screen", written to keep the dense 3D network scene out. The new first screen
   // holds the 2D world map canvas, so the rule is now: that one labelled canvas only, and no WebGL or three.js anywhere.
@@ -96,7 +99,7 @@ test('care story starts from the family problem', () => {
 test('home defines scattered records as the problem and leaves the choice of AI and sharing with the individual', () => {
   // Order of the new home. The world section moved up next to the map in the first screen, and the 2025 demo now follows
   // the care story inside one section; the rest keeps the old order: problem, system, uses, products, story.
-  const order = ['id="hero-title"', 'id="world"', 'id="uniqdata-app"', 'id="problem"', 'id="system"', 'id="value"', 'id="products"', 'id="products-title"', 'id="routes-title"', 'id="story"', 'id="care-title"', 'id="journey-title"', 'id="collaboration"'];
+  const order = ['id="hero-title"', 'id="world"', 'id="uniqdata-app"', 'id="research"', 'id="problem"', 'id="system"', 'id="value"', 'id="products"', 'id="products-title"', 'id="story"', 'id="care-title"', 'id="journey-title"', 'id="collaboration"'];
   let last = -1;
   for (const marker of order) { const at = home.indexOf(marker); assert.ok(at > last, marker); last = at; }
   // The old English caps label "DATA FRAGMENTATION" is gone; the section says it in its own heading.
@@ -109,7 +112,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
   for (const [index, start] of ['1 DataQ 형식을 표준화합니다.', '2 UniQdata 개인 DB로 쌓습니다.', '3 선택 AI·공유를 선택합니다.'].entries()) assert.ok(steps[index].startsWith(start), steps[index]);
   assert.doesNotMatch(system, /confirm/i);
   assert.ok(!home.includes('다시 입력하지'));
-  assert.ok(visibleText(block(home, 'id="routes-title"')).includes('자유'));
+  assert.ok(visibleText(block(home, 'id="products-title"')).includes('자유'));
   for (const rejected of ['한 사람의 이야기', '이야기의 시작', '돌봄이었습니다.', '정리할 후보', '정리 후보', '내 기준은', '기록의 기준점', '세계는 서버의 지도', 'NOT A COVERAGE MAP', '보호자와 함께 봅니다.', '문제를 먼저 봤습니다.', '문제를 먼저 만났습니다.', '상단 롤에서 약포를 아래 수령부로']) assert.ok(!home.includes(rejected), rejected);
 });
 
@@ -466,5 +469,46 @@ test('published media hashes match the provenance manifest and rejected mocks re
       if (path.startsWith('/assets/verified/')) assert.ok(registered.has(path), `${file}: ${path} has no provenance entry`);
       assert.ok(!blockedHashes.has(sha(path.slice(1))), `${file}: ${path} is a blocked asset`);
     }
+  }
+});
+
+// The order in which a study runs (UniQLab proposal, review, consent in UniQdata, connection, operation, records stay with the person).
+const flowSteps = [
+  ['연구기관이 UniQLab에서', '연구를 제안합니다.', '연구 목적, 요청 항목, 기간, 대상자 조건을 정해 제출합니다.'],
+  ['SportiQue가', '제안을 검토합니다.', '검토를 마친 연구만 참여자에게 열립니다.'],
+  ['개인이 UniQdata에서', '요청을 보고 동의합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 연구마다 따로 동의하고, 철회하면 새로운 사용은 바로 멈춥니다.'],
+  ['두 제품 사이에서', '동의한 범위의 기록만 연결됩니다.', '기관 계정만으로는 개인 기록에 접근할 수 없습니다.'],
+  ['연구기관이 UniQLab에서', '참여와 기록 현황을 확인합니다.', '동의 현황, 과제와 알림, 기록이 들어온 현황을 한곳에서 봅니다.'],
+  ['개인이 UniQdata에서', '연구가 끝나도 기록을 계속 가집니다.', '같은 기록으로 다음 연구나 다른 활용을 다시 선택합니다.'],
+];
+const flowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 위 순서는 현재 설계 기준입니다.';
+function assertFlow(html, lang, where) {
+  const list = block(html, 'class="flow"');
+  assert.ok(list.includes(`aria-label="${said('연구가 진행되는 순서', lang)}"`), where);
+  const items = [...list.matchAll(/<li class="flow-step flow-step--(lab|person|core)"><span class="flow-n" aria-hidden="true">(\d)<\/span><div class="flow-card"><p class="flow-who">([^<]*)<\/p><h3>([^<]*)<\/h3><p>([^<]*)<\/p><\/div><\/li>/g)].map(match => match.slice(1));
+  assert.deepEqual(items, flowSteps.map(([who, title, body], index) => [['lab', 'core', 'person', 'core', 'lab', 'person'][index], String(index + 1), said(who, lang), said(title, lang), said(body, lang)]), where);
+  assert.ok(html.includes(`>${said(flowNote, lang)}</p>`), `${where}: the flow says UniQLab is in development`);
+  assert.ok(html.includes(said('기관 계정만으로는 개인 기록에 접근할 수 없습니다.', lang)), where);
+  assert.doesNotMatch(list, /<(?:img|canvas|video|picture|svg)\b/, `${where}: the flow is words only`);
+}
+
+test('home shows the study flow between the app and the problem, with UniQLab marked as in development', () => {
+  for (const { prefix, lang } of languages) {
+    const page = read(fileOf(prefix, ''));
+    assert.ok(page.indexOf('id="uniqdata-app"') < page.indexOf('id="research"') && page.indexOf('id="research"') < page.indexOf('id="problem"'), `${prefix}home: order`);
+    const research = block(page, 'id="research"');
+    assert.match(research, twoLines(said('연구기관은 UniQLab에서,', lang).replaceAll('&amp;', '&'), said('개인은 UniQdata에서.', lang).replaceAll('&amp;', '&')));
+    assertFlow(research, lang, `${prefix}home`);
+    assert.ok(research.includes(`>${said('개발 중', lang)}</p>`), `${prefix}home: in development mark`);
+    assert.ok(research.includes(`href="/${prefix}contact/"`) && research.includes(`href="/${prefix}products/uniqlab/"`), `${prefix}home: both ways on`);
+    assert.doesNotMatch(research, /<(?:img|canvas|video|svg)\b/, prefix);
+    assert.ok(block(page, '<section').includes('href="#research"'), `${prefix}home: the first screen leads to the flow`);
+  }
+});
+
+test('the product list and the UniQLab page show the same study flow', () => {
+  for (const { prefix, lang } of languages) {
+    assertFlow(block(read(fileOf(prefix, 'products/')), 'id="uniqlab"'), lang, `${prefix}products`);
+    assertFlow(mainOf(read(fileOf(prefix, 'products/uniqlab/'))), lang, `${prefix}products/uniqlab`);
   }
 });

@@ -1,7 +1,7 @@
 // Product details /products/<id>/ (2026-11-24 design), one page per product in assets/public-records.json
 // (YAKSON is not published). Korean text is the original from build-site.mjs (productDetailContent,
 // productDetailPage, liveApp), unchanged.
-import { esc, lines, tag, head, section, split, button, link, appTile, pageHero, appStore, playStore } from '../ui.mjs';
+import { esc, lines, tag, head, section, split, button, link, appTile, pageHero, appStore, playStore, researchFlow, researchFlowNote } from '../ui.mjs';
 import { data } from '../data.mjs';
 import { detailSharing } from '../products-parts.mjs';
 
@@ -34,9 +34,10 @@ function page(p) {
     ? section({ id: 'uniqdata-app', label: 'live-app-title', body: head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('스토어의 UniQdata,', '다음 버전을 준비합니다.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.' }) + appTile() + `<p class="product-now">${link({ href: '/products/uniqdata/now/', label: 'UniQdata 현황판: 지금 함께 기록하는 사람들', mark: '↗' })}</p>` })
     : '';
   const features = section({ label: `features-${p.id}`, body: `<h2 id="features-${p.id}" class="h2-sm">어떤 일을 할 수 있나요?</h2><ul class="feature-rows">${p.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>${p.modules.length ? `<p class="note">${p.modules.map(esc).join(' · ')}</p>` : ''}` });
+  const flow = p.id === 'uniqlab' ? section({ label: 'flow-title-detail', body: `<h2 id="flow-title-detail" class="h2-sm flow-title">연구가 진행되는 순서</h2>${researchFlow()}<p class="note">${esc(researchFlowNote)}</p>` }) : '';
   const use = section({ label: `example-${p.id}`, body: split(`${tag('활용 예시')}<h2 id="example-${p.id}">${esc(detail.exampleTitle)}</h2><p>${esc(detail.example)}</p>`, `<h2 id="status-${p.id}" class="h2-sm">현재 범위</h2><p>${esc(detail.status)}</p>`) });
   const actions = section({ className: 'product-actions', body: `<div class="actions">${detail.links.map(([href, label], index) => button({ href, label, variant: index ? 'ghost' : 'primary', arrow: '↗' })).join('')}</div>` });
-  return [back, hero, app, features, use, detailSharing(p.id), actions].join('\n');
+  return [back, hero, app, features, flow, use, detailSharing(p.id), actions].join('\n');
 }
 
 export default data.products.map(p => ({
