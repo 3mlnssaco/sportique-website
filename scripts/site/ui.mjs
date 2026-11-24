@@ -62,7 +62,7 @@ export const appShots = [
   ['report', '리포트'],
   ['vault', '보관함'],
 ];
-export const appShotNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+export const appShotNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
 export const notDiagnosisNotice = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
 
 // Phone frame drawn in css (.phone): the exported screens have no device bezel. Tall screens show their top part only.
