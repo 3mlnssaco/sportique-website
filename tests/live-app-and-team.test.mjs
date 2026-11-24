@@ -47,7 +47,7 @@ test('home, products and UniQdata detail show the four next-version screens labe
     const home = read(fileOf(prefix, ''));
     assert.equal(count(block(home, 'id="products"'), /<img\b/g), 0, `${prefix}home: the product section shows no screens, so it needs no screen notice`);
     for (const url of [appStore, playStore]) assert.ok(block(home, 'id="uniqdata-app"').includes(`href="${url}"`), `${prefix}home ${url}`);
-    assert.ok(home.indexOf('id="uniqdata-app"') < home.indexOf('id="problem"'), `${prefix}home: the live app comes before the problem`);
+    assert.ok(home.indexOf('id="products"') < home.indexOf('id="uniqdata-app"'), `${prefix}home: the live app section follows the products`);
   }
 });
 

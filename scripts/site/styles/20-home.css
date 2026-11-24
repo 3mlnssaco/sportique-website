@@ -43,10 +43,15 @@
   .pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Products: three equal link tiles. */
-.trio { display: grid; gap: 16px; margin-top: clamp(32px, 4vw, 56px); }
-@media (min-width: 901px) {
-  .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* Products: four equal tiles (three links and the sub-app tile): 1, 2, then 4 columns. */
+.quartet { display: grid; gap: 16px; margin-top: clamp(32px, 4vw, 56px); }
+/* The status sits under the name in every tile, so the four tiles line up whatever the name length. */
+.quartet .name-line { flex-direction: column; align-items: flex-start; gap: 8px; }
+@media (min-width: 701px) {
+  .quartet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+@media (min-width: 1100px) {
+  .quartet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .duo { display: grid; gap: 16px; }
 @media (min-width: 701px) {

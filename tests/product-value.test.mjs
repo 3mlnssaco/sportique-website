@@ -55,7 +55,7 @@ test('UniQLab is explained in words about consent, with no app screen, mock UI o
       assert.doesNotMatch(html, /uniqlab-data-table-20260513\.png|uniqlab-screen|data-research-3d|research-core|research-consent-badge|research-3d-concept/, prefix);
       assert.doesNotMatch(html, /<(?:img|canvas|video|picture|svg)\b/, `${prefix}: UniQLab shows no picture`);
     }
-    assert.ok(detail.includes(said('연구팀과 기관을 위한 운영 도구입니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.', lang)), prefix);
+    assert.ok(detail.includes(said('연구팀과 기관을 위한 운영 도구로 개발하고 있습니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.', lang)), prefix);
     assert.ok(detail.includes(said(contexts.uniqlab, lang)), prefix);
   }
   // The 3D scene's pointer and reduced-motion guards went with it. The two canvases that still move are covered by

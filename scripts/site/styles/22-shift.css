@@ -1,0 +1,21 @@
+/* 22-shift: "from institutions to the individual" contrast list on the home page.
+   Wide screens: two columns with the column heads once above; narrow screens: one column, each cell carries its own label. */
+.shift-cols { display: none; }
+.shift { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.shift li { display: grid; border-bottom: 1px solid var(--line); }
+.shift-from, .shift-to { display: grid; gap: 8px; align-content: start; justify-items: start; padding: 22px 0; }
+.shift-from { color: var(--muted); }
+.shift-to { padding-top: 0; color: var(--ink); }
+.shift-from p, .shift-to p { max-width: 520px; font-size: 18px; font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+.shift-k { color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.4; }
+.shift-to .tag { margin-top: 4px; }
+@media (min-width: 901px) {
+  .shift-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--split-gap); margin-top: clamp(32px, 4vw, 56px); padding-bottom: 14px; color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.4; }
+  .shift { margin-top: 0; }
+  .shift li { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--split-gap); }
+  .shift-from, .shift-to { padding: 26px 0; }
+  .shift-k { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+@media (max-width: 900px) {
+  .shift { margin-top: clamp(32px, 4vw, 56px); }
+}

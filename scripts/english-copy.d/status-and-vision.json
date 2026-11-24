@@ -1,0 +1,23 @@
+{
+  "계획": "Planned",
+  "기관 중심에서,": "From institutions,",
+  "개인 중심으로.": "to the individual.",
+  "건강기록은 지금까지 기관마다 따로 쌓였습니다. SportiQue는 그 중심을 기록의 주인인 개인으로 옮깁니다.": "Health records have piled up separately at each institution. SportiQue moves the centre to the individual who owns the record.",
+  "지금까지": "Until now",
+  "SportiQue가 만드는 것": "What SportiQue is building",
+  "지금까지와 SportiQue가 만드는 것": "Until now, and what SportiQue is building",
+  "기록은 병원과 서비스마다 따로 남습니다.": "Records stay separately at each hospital and service.",
+  "개인이 한곳에 모아 관리합니다.": "The individual gathers and manages them in one place.",
+  "연구가 끝나면 참여자와의 연결도 끝납니다.": "When a study ends, the link with its participants ends too.",
+  "연구가 끝나도 기록은 개인에게 남습니다.": "The records stay with the individual after the study ends.",
+  "병원이나 나라를 옮기면 기록이 끊깁니다.": "Moving to another hospital or country breaks the record.",
+  "옮겨도 이어 쓰는 기록을 목표로 합니다.": "The goal is a record that carries on after a move.",
+  "쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.": "Review accumulated records as a non-diagnostic summary for each period.",
+  "궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.": "Ask health questions in a chat. It does not replace a diagnosis.",
+  "기록이 모이면 쓸 수 있는 길이 늘어납니다. 지금 되는 것, 만들고 있는 것, 계획하는 것을 표시해 두었습니다.": "Once records are gathered, more ways to use them open up. Each one is marked as live now, being built, or planned.",
+  "서브앱과 SDK": "Sub-apps and SDK",
+  "다른 개발사의 서비스가 같은 동의 구조 위에서 열리는 길을 만들고 있습니다.": "A path for other developers' services to open on the same consent structure is being built.",
+  "DataQ는 원본과 출처를 보존하면서 반입·표준화 후보를 만드는 내부 단계입니다. MediQ와 MindQ는 이후 UniQdata 안에서 열 인앱 경험으로 계획하고 있습니다.": "DataQ is an internal step that preserves originals and provenance while preparing record intake and standardization candidates. MediQ and MindQ are planned as in-app experiences that will open inside UniQdata later.",
+  "연구팀과 기관을 위한 운영 도구로 개발하고 있습니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.": "It is being developed as an operations tool for research teams and institutions. Personal records are not automatically shared beyond the consented purpose and scope.",
+  "Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다. 기관의 돌봄 요청·담당자 배정 업무는 이 앱의 범위가 아닙니다.": "Bodab is an app for older adults to use themselves. It is in preparation and cannot be downloaded from the stores yet. Institutional care requests and staff assignment are outside this app's scope."
+}

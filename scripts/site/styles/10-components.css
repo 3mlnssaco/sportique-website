@@ -8,6 +8,13 @@
 }
 .tag-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
 
+/* A name with its status tag beside it (wraps under the name when the line is short). */
+.name-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.name-line .tag { padding: 3px 10px; font-size: 12px; white-space: nowrap; }
+.note-status { margin-top: 10px; }
+.note-status .tag, .feature-rows .tag { padding: 3px 10px; font-size: 12px; }
+.feature-rows .with-status { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+
 /* Buttons: 52px pills. Hover changes colour only; the arrow circle moves 2px. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 12px;
@@ -60,6 +67,8 @@
 .tile--link:hover { border-color: var(--line-2); }
 .tile-mark { position: absolute; top: 26px; right: 28px; color: var(--ink-2); font-size: 18px; line-height: 1.35; }
 .tile--link:hover .tile-mark { color: var(--ink); }
+.tile--static { padding-right: 28px; }
+.tile--static:hover { border-color: var(--line); }
 
 /* Store buttons */
 .store-buttons { display: flex; flex-wrap: wrap; gap: 10px; }

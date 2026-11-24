@@ -36,6 +36,13 @@ export function tag(label, { live = false } = {}) {
   return `<p class="tag">${live ? '<span class="tag-dot" aria-hidden="true"></span>' : ''}${esc(label)}</p>`;
 }
 
+// Status of a thing: one of four words. Only "서비스 중" gets the mint dot.
+export const statuses = ['서비스 중', '개발 중', '준비 중', '계획'];
+export function statusTag(status) {
+  if (!statuses.includes(status)) throw new Error(`Unknown status: ${status}`);
+  return tag(status, { live: status === '서비스 중' });
+}
+
 // Section head: tag, heading, lead paragraph and optional extra (buttons).
 // `split` puts the heading left and the lead right on wide screens.
 export function head({ tag: label, id, title, lead = '', extra = '', level = 'h2', split = true }) {
@@ -164,7 +171,7 @@ const flowSteps = [
   ['person', '개인이 UniQdata에서', '연구가 끝나도 기록을 계속 가집니다.', '같은 기록으로 다음 연구나 다른 활용을 다시 선택합니다.'],
 ];
 export function researchFlow() {
-  const lanes = `<div class="flow-lanes" aria-hidden="true"><div class="flow-lane"><strong>UniQLab</strong><small>연구기관</small>${tag('개발 중')}</div><div class="flow-lane"><strong>UniQdata</strong><small>개인</small>${tag('서비스 중', { live: true })}</div></div>`;
+  const lanes = `<div class="flow-lanes" aria-hidden="true"><div class="flow-lane"><strong>UniQLab</strong><small>연구기관</small>${statusTag('개발 중')}</div><div class="flow-lane"><strong>UniQdata</strong><small>개인</small>${statusTag('서비스 중')}</div></div>`;
   const step = ([kind, who, title, body], index) => `<li class="flow-step flow-step--${kind}"><span class="flow-n" aria-hidden="true">${index + 1}</span><div class="flow-card"><p class="flow-who">${esc(who)}</p><h3>${esc(title)}</h3><p>${esc(body)}</p></div></li>`;
   return `${lanes}<ol class="flow" aria-label="연구가 진행되는 순서">${flowSteps.map(step).join('')}</ol>`;
 }

@@ -1,8 +1,9 @@
 // Home page (2026-11-24 design). Every Korean sentence is the original text node from
 // scripts/home-content.html and liveApp() in scripts/build-site.mjs, unchanged, so the existing
 // English keys keep matching. New words are listed in scripts/english-copy.d/home.json.
-import { esc, lines, button, link, tag, head, storeButtons, appTile, rows, researchFlow, researchFlowNote } from '../ui.mjs';
+import { esc, lines, button, link, tag, statusTag, head, storeButtons, appTile, rows, researchFlow, researchFlowNote } from '../ui.mjs';
 import { data } from '../data.mjs';
+import { productStatus } from '../products-parts.mjs';
 
 const worldPlaceholder = '<figure class="world-lights" data-world-lights></figure>';
 
@@ -20,11 +21,19 @@ async function worldLights() {
 // `product-hero` is the hook assets/stage-field-20261124.js uses to place the first-screen lights.
 const hero = world => `<section class="hero product-hero" aria-labelledby="hero-title"><div class="wrap hero-inner">${tag('개인을 위한 건강데이터 네트워크', { live: true })}<h1 id="hero-title">${lines('건강기록은 한곳에.', '선택은 개인에게.')}</h1><p class="lead">SportiQue는 흩어진 건강기록을 개인이 모아 관리하고, 쓰거나 나눌 때 대상과 범위를 직접 정하는 기반을 만듭니다. 그 시작이 UniQdata입니다.</p><div class="actions">${button({ href: 'https://uniqdata.io/', label: 'UniQdata 알아보기', arrow: '↗' })}${button({ href: '#research', label: 'UniQLab 흐름 보기', variant: 'ghost', arrow: '↓' })}</div></div><div class="hero-world">${world}</div></section>`;
 
-const world = `<section class="section" id="world" aria-labelledby="world-title"><div class="wrap split"><div class="split-main">${tag('네트워크')}<h2 id="world-title">${lines('국가가 달라도,', '개인의 기록을 이어 씁니다.')}</h2><p>해외에서 진료를 받거나 가족과 떨어져 지낼 때도, 필요한 기록을 이어서 활용할 수 있어야 합니다. 공유할 기록과 대상은 개인이 정합니다.</p>${link({ href: '/vision/', label: '회사 비전 보기' })}</div><ul class="rules"><li>공유할 사람과 항목을 개인이 선택.</li><li>나라가 달라도 이어지도록.</li><li>AI·앱마다 허용할 범위를 따로 선택.</li></ul></div></section>`;
+const world = `<section class="section" id="world" aria-labelledby="world-title"><div class="wrap split"><div class="split-main"><div class="name-line">${tag('네트워크')}${statusTag('계획')}</div><h2 id="world-title">${lines('국가가 달라도,', '개인의 기록을 이어 씁니다.')}</h2><p>해외에서 진료를 받거나 가족과 떨어져 지낼 때도, 필요한 기록을 이어서 활용할 수 있어야 합니다. 공유할 기록과 대상은 개인이 정합니다.</p>${link({ href: '/vision/', label: '회사 비전 보기' })}</div><ul class="rules"><li>공유할 사람과 항목을 개인이 선택.</li><li>나라가 달라도 이어지도록.</li><li>AI·앱마다 허용할 범위를 따로 선택.</li></ul></div></section>`;
 
 const app = `<section class="section" id="uniqdata-app" aria-labelledby="live-app-title"><div class="wrap">${head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('스토어의 UniQdata,', '다음 버전을 준비합니다.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.', extra: storeButtons })}${appTile()}</div></section>`;
 
 const research = `<section class="section" id="research" aria-labelledby="research-title"><div class="wrap">${head({ tag: 'UniQLab', id: 'research-title', title: lines('연구기관은 UniQLab에서,', '개인은 UniQdata에서.'), lead: '연구기관이 연구를 제안하면, 개인이 요청을 보고 직접 동의합니다. 동의한 범위의 기록만 연구에 연결됩니다.' })}${researchFlow()}<p class="note">${esc(researchFlowNote)}</p><div class="actions">${button({ href: '/contact/', label: '기관 도입 문의' })}${link({ href: '/products/uniqlab/', label: 'UniQLab 자세히' })}</div></div></section>`;
+
+const shiftRows = [
+  ['기록은 병원과 서비스마다 따로 남습니다.', '개인이 한곳에 모아 관리합니다.', '서비스 중'],
+  ['연구가 끝나면 참여자와의 연결도 끝납니다.', '연구가 끝나도 기록은 개인에게 남습니다.', '개발 중'],
+  ['병원이나 나라를 옮기면 기록이 끊깁니다.', '옮겨도 이어 쓰는 기록을 목표로 합니다.', '계획'],
+];
+// Wide screens show the two column heads once (.shift-cols); narrow screens show each cell's own label (.shift-k).
+const shift = `<section class="section" id="shift" aria-labelledby="shift-title"><div class="wrap">${head({ tag: '비전', id: 'shift-title', title: lines('기관 중심에서,', '개인 중심으로.'), lead: '건강기록은 지금까지 기관마다 따로 쌓였습니다. SportiQue는 그 중심을 기록의 주인인 개인으로 옮깁니다.' })}<div class="shift-cols" aria-hidden="true"><span>지금까지</span><span>SportiQue가 만드는 것</span></div><ul class="shift" aria-label="지금까지와 SportiQue가 만드는 것">${shiftRows.map(([from, to, status]) => `<li><div class="shift-from"><span class="shift-k">지금까지</span><p>${esc(from)}</p></div><div class="shift-to"><span class="shift-k">SportiQue가 만드는 것</span><p>${esc(to)}</p>${statusTag(status)}</div></li>`).join('')}</ul></div></section>`;
 
 const problems = [
   ['기록이 제각각 흩어집니다.', '진료·검진·복약·기기 기록은 기관과 서비스마다 다른 형식과 계정 안에 남습니다.'],
@@ -35,31 +44,32 @@ const problem = `<section class="section" id="problem" aria-labelledby="problem-
 
 // A real sequence: records are standardised, stored in the personal DB, then used by choice.
 const steps = [
-  ['DataQ', '형식을 표준화합니다.', '원본과 출처를 보존하면서 서로 다른 형식·항목·단위를 공통 구조로 연결합니다.'],
-  ['UniQdata', '개인 DB로 쌓습니다.', '건강기록을 한곳에서 관리하고, 시간에 따라 다시 활용합니다.'],
-  ['선택', 'AI·공유를 선택합니다.', '어디에, 어떤 AI 모델·플랫폼에, 어떤 목적으로, 어느 범위와 기간까지 쓸지 개인이 정합니다.'],
+  ['DataQ', '개발 중', '형식을 표준화합니다.', '원본과 출처를 보존하면서 서로 다른 형식·항목·단위를 공통 구조로 연결합니다.'],
+  ['UniQdata', '서비스 중', '개인 DB로 쌓습니다.', '건강기록을 한곳에서 관리하고, 시간에 따라 다시 활용합니다.'],
+  ['선택', '개발 중', 'AI·공유를 선택합니다.', '어디에, 어떤 AI 모델·플랫폼에, 어떤 목적으로, 어느 범위와 기간까지 쓸지 개인이 정합니다.'],
 ];
-const system = `<section class="section" id="system" aria-labelledby="system-title"><div class="wrap">${head({ tag: '방식', id: 'system-title', title: lines('데이터를 개인에게.', '선택권도 개인에게.'), lead: 'DataQ는 출처마다 다른 건강데이터의 형식·항목·단위를 표준화합니다. UniQdata는 기록을 개인 DB에서 관리하고, 개인이 활용과 공유 범위를 정하는 접점입니다.' })}<ol class="steps">${steps.map(([name, title, body], index) => `<li><span class="step-n" aria-hidden="true">${index + 1}</span><div class="step-body"><p class="step-name">${name}</p><h3>${esc(title)}</h3><p>${esc(body)}</p></div></li>`).join('')}</ol></div></section>`;
+const system = `<section class="section" id="system" aria-labelledby="system-title"><div class="wrap">${head({ tag: '방식', id: 'system-title', title: lines('데이터를 개인에게.', '선택권도 개인에게.'), lead: 'DataQ는 출처마다 다른 건강데이터의 형식·항목·단위를 표준화합니다. UniQdata는 기록을 개인 DB에서 관리하고, 개인이 활용과 공유 범위를 정하는 접점입니다.' })}<ol class="steps">${steps.map(([name, status, title, body], index) => `<li><span class="step-n" aria-hidden="true">${index + 1}</span><div class="step-body"><div class="name-line"><p class="step-name">${name}</p>${statusTag(status)}</div><h3>${esc(title)}</h3><p>${esc(body)}</p></div></li>`).join('')}</ol></div></section>`;
 
 const uses = [
-  ['개인은 기록을 리포트로 확인합니다.', '기간·출처·공백과 관찰된 변화를 개인 기록의 흐름으로 다시 확인합니다.'],
-  ['개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '필요한 항목·기간·목적·처리 위치를 먼저 고르고, 승인한 최소 범위만 AI에 전달합니다.'],
-  ['보호자에게 필요한 기록만 공유합니다.', '어느 보호자에게 어떤 항목을 언제까지 공유할지 직접 정하고, 필요하면 접근을 철회합니다.'],
-  ['해외에서도 필요한 기록을 꺼내 씁니다.', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.'],
-  ['참여할 연구와 공유할 기록을 고릅니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
-  ['돌봄·복약 앱에 기록을 연결합니다.', 'Bodab의 가족 돌봄, MediQ의 진료 준비처럼 같은 기록을 목적에 맞게 활용합니다.'],
-  ['이용 이력을 다시 확인합니다.', '무엇을 어디에 왜 썼는지 확인하고, 동의 범위를 줄이거나 철회한 뒤 이후 활용에 반영합니다.'],
+  ['개인은 기록을 리포트로 확인합니다.', '서비스 중', '쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.'],
+  ['개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '서비스 중', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.'],
+  ['보호자에게 필요한 기록만 공유합니다.', '계획', '어느 보호자에게 어떤 항목을 언제까지 공유할지 직접 정하고, 필요하면 접근을 철회합니다.'],
+  ['해외에서도 필요한 기록을 꺼내 씁니다.', '계획', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.'],
+  ['참여할 연구와 공유할 기록을 고릅니다.', '개발 중', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
+  ['돌봄·복약 앱에 기록을 연결합니다.', '계획', 'Bodab의 가족 돌봄, MediQ의 진료 준비처럼 같은 기록을 목적에 맞게 활용합니다.'],
+  ['이용 이력을 다시 확인합니다.', '개발 중', '무엇을 어디에 왜 썼는지 확인하고, 동의 범위를 줄이거나 철회한 뒤 이후 활용에 반영합니다.'],
 ];
-const value = `<section class="section" id="value" aria-labelledby="value-title"><div class="wrap">${head({ tag: '쓰임', id: 'value-title', title: lines('모인 기록은,', '선택지가 됩니다.'), lead: '개인은 기록을 리포트로 확인하고 AI에 질문하며, 보호자에게 필요한 항목을 공유합니다. 연구와 목적별 앱에는 개인이 동의한 범위만 연결합니다.' })}<ul class="pairs" aria-label="개인 기록의 활용 경로">${uses.map(([title, body]) => `<li><h3>${esc(title)}</h3><p>${esc(body)}</p></li>`).join('')}</ul><p class="note">모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.</p></div></section>`;
+const value = `<section class="section" id="value" aria-labelledby="value-title"><div class="wrap">${head({ tag: '쓰임', id: 'value-title', title: lines('모인 기록은,', '선택지가 됩니다.'), lead: '기록이 모이면 쓸 수 있는 길이 늘어납니다. 지금 되는 것, 만들고 있는 것, 계획하는 것을 표시해 두었습니다.' })}<ul class="pairs" aria-label="개인 기록의 활용 경로">${uses.map(([title, status, body]) => `<li><div class="name-line"><h3>${esc(title)}</h3>${statusTag(status)}</div><p>${esc(body)}</p></li>`).join('')}</ul><p class="note">모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.</p></div></section>`;
 
-// The three products as equal link tiles: each says what the product is in the sentence the product list uses.
+// The three products as equal link tiles, then the sub-app and SDK tile (not a link): each says what the product is in the sentence the product list uses.
 const productBlurbs = {
   uniqdata: null,
   uniqlab: '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 연구 워크스페이스.',
   bodab: '복약, 일정, 생활 상태를 가족과 함께 챙기는 돌봄 경험.',
 };
-const productTiles = data.products.map(p => `<a class="tile tile--link" href="/products/${p.id}/"><h3>${esc(p.name)}</h3><p>${esc(productBlurbs[p.id] ?? p.description)}</p><span class="tile-mark" aria-hidden="true">↗</span></a>`).join('');
-const products = `<section class="section" id="products" aria-labelledby="products-title"><div class="wrap">${head({ tag: '제품', id: 'products-title', title: lines('하나의 기록,', '활용은 자유롭게.'), extra: link({ href: '/products/', label: '모든 제품 보기' }) })}<div class="trio">${productTiles}</div></div></section>`;
+const productTiles = data.products.map(p => `<a class="tile tile--link" href="/products/${p.id}/"><div class="name-line"><h3>${esc(p.name)}</h3>${statusTag(productStatus[p.id])}</div><p>${esc(productBlurbs[p.id] ?? p.description)}</p><span class="tile-mark" aria-hidden="true">↗</span></a>`).join('')
+  + `<div class="tile tile--link tile--static"><div class="name-line"><h3>서브앱과 SDK</h3>${statusTag('개발 중')}</div><p>다른 개발사의 서비스가 같은 동의 구조 위에서 열리는 길을 만들고 있습니다.</p></div>`;
+const products = `<section class="section" id="products" aria-labelledby="products-title"><div class="wrap">${head({ tag: '제품', id: 'products-title', title: lines('하나의 기록,', '활용은 자유롭게.'), extra: link({ href: '/products/', label: '모든 제품 보기' }) })}<div class="quartet">${productTiles}</div></div></section>`;
 
 const story = `<section class="section" id="story" aria-labelledby="care-title"><div class="wrap story"><div class="story-main">${tag('이야기')}<h2 id="care-title">${lines('돌봄에서,', '더 큰 문제를 찾았습니다.')}</h2><p class="lead">가족이 어르신의 복약·활동·진료를 함께 챙기려 해도, 필요한 기록은 병원·약국·앱에 흩어져 있었습니다.</p><p>가족은 복약 확인 상태와 진료 전에 필요한 정보를 보려면 여러 곳의 기록을 대조하고 서로 다시 물어야 했습니다. 어떤 기록을 누구와 나눌지도 개인이 쉽게 정할 수 없었습니다.</p><p>SportiQue는 Bodab 한 앱에 그치지 않고, 개인이 기록을 한곳에 모아 관리하며 활용·공유 범위를 직접 정하는 기반을 만들기로 했습니다.</p></div><div class="story-side"><h3 id="journey-title">${lines('기록의 공유를', '개인이 정하도록.')}</h3><p class="year">2025</p><p>2025년 XRPL 데모에서 사용자는 공유할 기록과 열람 기간을 선택했습니다. 허용된 접근·활용 이력을 확인하고 연구 참여 보상을 자동으로 받는 흐름도 구현했습니다.</p><p>건강기록 원문은 개인 DB에 두고 권한과 이용 이력만 연결했습니다. 이 경험을 UniQdata의 기록 관리와 공유 선택으로 이어가고 있습니다.</p>${link({ href: '/awards/', label: '수상·선정·발표 기록 보기' })}</div></div></section>`;
 
@@ -70,6 +80,6 @@ export default {
   title: '건강기록은 한곳에, 선택은 개인에게',
   description: 'SportiQue는 흩어진 건강기록을 개인이 모아 관리하고, 쓰거나 나눌 때 대상과 범위를 직접 정하는 기반을 만듭니다.',
   async body() {
-    return [hero(await worldLights()), world, app, research, problem, system, value, products, story, closing].join('\n');
+    return [hero(await worldLights()), world, shift, problem, system, value, products, app, research, story, closing].join('\n');
   },
 };

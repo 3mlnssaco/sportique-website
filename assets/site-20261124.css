@@ -217,6 +217,13 @@ main > .section:last-child { padding-bottom: var(--section); }
 }
 .tag-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
 
+/* A name with its status tag beside it (wraps under the name when the line is short). */
+.name-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.name-line .tag { padding: 3px 10px; font-size: 12px; white-space: nowrap; }
+.note-status { margin-top: 10px; }
+.note-status .tag, .feature-rows .tag { padding: 3px 10px; font-size: 12px; }
+.feature-rows .with-status { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+
 /* Buttons: 52px pills. Hover changes colour only; the arrow circle moves 2px. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 12px;
@@ -269,6 +276,8 @@ main > .section:last-child { padding-bottom: var(--section); }
 .tile--link:hover { border-color: var(--line-2); }
 .tile-mark { position: absolute; top: 26px; right: 28px; color: var(--ink-2); font-size: 18px; line-height: 1.35; }
 .tile--link:hover .tile-mark { color: var(--ink); }
+.tile--static { padding-right: 28px; }
+.tile--static:hover { border-color: var(--line); }
 
 /* Store buttons */
 .store-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -528,10 +537,15 @@ main > .section:last-child { padding-bottom: var(--section); }
   .pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Products: three equal link tiles. */
-.trio { display: grid; gap: 16px; margin-top: clamp(32px, 4vw, 56px); }
-@media (min-width: 901px) {
-  .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* Products: four equal tiles (three links and the sub-app tile): 1, 2, then 4 columns. */
+.quartet { display: grid; gap: 16px; margin-top: clamp(32px, 4vw, 56px); }
+/* The status sits under the name in every tile, so the four tiles line up whatever the name length. */
+.quartet .name-line { flex-direction: column; align-items: flex-start; gap: 8px; }
+@media (min-width: 701px) {
+  .quartet { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+@media (min-width: 1100px) {
+  .quartet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .duo { display: grid; gap: 16px; }
 @media (min-width: 701px) {
@@ -559,6 +573,28 @@ main > .section:last-child { padding-bottom: var(--section); }
 .closing-inner > .actions { margin-top: 14px; }
 .closing-more { display: grid; justify-items: center; gap: 14px; margin-top: clamp(56px, 7vw, 96px); }
 .closing-more p { max-width: 480px; }
+
+/* 22-shift: "from institutions to the individual" contrast list on the home page.
+   Wide screens: two columns with the column heads once above; narrow screens: one column, each cell carries its own label. */
+.shift-cols { display: none; }
+.shift { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.shift li { display: grid; border-bottom: 1px solid var(--line); }
+.shift-from, .shift-to { display: grid; gap: 8px; align-content: start; justify-items: start; padding: 22px 0; }
+.shift-from { color: var(--muted); }
+.shift-to { padding-top: 0; color: var(--ink); }
+.shift-from p, .shift-to p { max-width: 520px; font-size: 18px; font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+.shift-k { color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.4; }
+.shift-to .tag { margin-top: 4px; }
+@media (min-width: 901px) {
+  .shift-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--split-gap); margin-top: clamp(32px, 4vw, 56px); padding-bottom: 14px; color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.4; }
+  .shift { margin-top: 0; }
+  .shift li { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--split-gap); }
+  .shift-from, .shift-to { padding: 26px 0; }
+  .shift-k { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+@media (max-width: 900px) {
+  .shift { margin-top: clamp(32px, 4vw, 56px); }
+}
 
 /* 25-flow: the order in which a study runs (researchFlow() in scripts/site/ui.mjs). Home, product list, UniQLab page.
    Narrow screens: one column, rail on the left, every card on the right.
