@@ -1,7 +1,9 @@
 {
-  "세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳이고, 나머지는 앞으로 켤 곳입니다.": "World map. Lit countries are where the service is live today; the rest are next to light.",
+  "세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳, 고리로 표시한 나라는 준비 중인 곳이고, 나머지는 앞으로 켤 곳입니다. 나라 이름은 이어지는 목록에 있습니다.": "World map. Lit countries are where the service is live today, countries marked with a ring are in preparation, and the rest are next to light. Country names follow in the list.",
   "켜진 곳": "Lit now",
   "앞으로 켤 곳": "Next to light",
   "UniQdata 서비스 중": "UniQdata live",
-  "대한민국": "South Korea"
+  "대한민국": "South Korea",
+  "몽골": "Mongolia",
+  "미국": "United States"
 }

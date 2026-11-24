@@ -91,6 +91,12 @@ export function cssRules(css) {
   return rules;
 }
 
+// The one animation the stylesheet may hold: the blinking ring in the map legend (a country in preparation). The checks that
+// forbid animation elsewhere run on the stylesheet without it; tests/landing.test.mjs checks where that one is allowed to run.
+export const withoutLegendBlink = css => css
+  .replace(/@keyframes world-lights-blink\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/, '')
+  .replace(/animation:\s*world-lights-blink\s[^;}]*;?/, '');
+
 // Local files a page loads or links to: [attribute, path without query or fragment].
 export const localReferences = html => [...html.matchAll(/\s(src|href)="(\/[^"?#]*)[^"]*"/g)].map(match => [match[1], match[2]]);
 

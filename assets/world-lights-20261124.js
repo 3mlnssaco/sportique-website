@@ -1,6 +1,7 @@
 // "Lights of the world": the world as a grid of dots where only the countries the service has reached are lit.
 // Land cells come from assets/world-grid-20261124.json (scripts/make-world-grid.mjs), the lit countries from the
 // figure's data-lit attribute, and the visible words from its figcaption (scripts/site/world-lights.mjs).
+// Countries marked "in preparation" (the figure's [data-soon] caption items) are not lit: a steady mint tint and a blinking beacon.
 // The centre of the picture is people: white dots inside lit countries, each tied to a few nearby land dots.
 // The same ?v=… the page used to load this module is passed on to the grid, so one changed file changes every address.
 const GRID_URL = '/assets/world-grid-20261124.json' + new URL(import.meta.url).search;
@@ -19,6 +20,11 @@ const GLOW_SCALE = 2.4, GLOW_MIN_CELLS = 9, GLOW_ALPHA = 0.42;
 const RIPPLE_PERIOD = 5.2, RIPPLE_SPEED = 30, RIPPLE_WIDTH = 2.6, RIPPLE_LIFT = 0.55, RIPPLE_RANGE = 160, RIPPLE_STAGGER = 1.3;
 const RIPPLE_LEVELS = 10, FRAME_MS = 33;
 const PIN_GAP = 28;
+// Countries in preparation: a steady tint, and a beacon (core dots, ring, halo) that blinks.
+const SOON_TINT = 0.34, SOON_IN = 0.6, SOON_STILL = 0.7;
+const SOON_CORE = 1.6, SOON_CORE_MIN = 3, SOON_RING = 3.2, SOON_HALO = 7, SOON_HALO_ALPHA = 0.30;
+const BLINK_PERIOD = 1.5, BLINK_RISE = 0.12, BLINK_HOLD = 0.55, BLINK_FALL = 0.67, BLINK_LOW = 0.12, BLINK_HIGH = 1, BLINK_OFFSET = 0.4;
+const CORE_DOT = '190,255,224';
 const FADE = 0.7, STAGGER = 0.45;
 const BREATH_PERIOD = 6, BREATH_DEPTH = 0.08;
 const PERSON_IN = 0.45, PERSON_STEP = 0.09, LINK_DELAY = 0.3, LINK_IN = 0.6;
@@ -37,6 +43,15 @@ function seededRandom(seed) {
 }
 const seedOf = text => { let h = SEED; for (const ch of text) h = Math.imul(h ^ ch.charCodeAt(0), 0x01000193); return h >>> 0; };
 const ease = x => { const v = Math.min(1, Math.max(0, x)); return v * v * (3 - 2 * v); };
+// Blink level at a point of the period (0..1): up fast, held, down, then dark until the next one.
+function blink(phase) {
+  const p = ((phase % 1) + 1) % 1;
+  let s = 0;
+  if (p < BLINK_RISE) s = ease(p / BLINK_RISE);
+  else if (p < BLINK_HOLD) s = 1;
+  else if (p < BLINK_FALL) s = 1 - ease((p - BLINK_HOLD) / (BLINK_FALL - BLINK_HOLD));
+  return BLINK_LOW + (BLINK_HIGH - BLINK_LOW) * s;
+}
 function shuffle(list, rand) {
   for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
   return list;
@@ -135,7 +150,7 @@ function rippleCells(grid, countries) {
   }
 }
 
-function buildScene(grid, lit) {
+function buildScene(grid, lit, soon = []) {
   const { cols, cells, codes, centers } = grid;
   const countries = [];
   for (const entry of lit) {
@@ -184,7 +199,24 @@ function buildScene(grid, lit) {
   }
   const lastArc = arcs.length ? arcs[arcs.length - 1].at + ARC_IN : 0;
   const introEnd = countries.length ? Math.max(peopleAt + 6 * PERSON_STEP + LINK_DELAY + LINK_IN, lastArc) : 0;
-  return { countries, byValue, arcs, introEnd, rippleAt, alpha };
+
+  // Countries in preparation: no people, ties, ripples or glow, and they do not lift the land around them.
+  const upcoming = [];
+  for (const entry of soon) {
+    const value = codes.indexOf(entry.code) + 1;
+    if (!value || byValue.has(value) || upcoming.some(c => c.value === value)) continue;
+    const [cx, cy, size] = centers[value - 1];
+    upcoming.push({ code: entry.code, value, cx, cy, size, cells: [], core: [], phase: upcoming.length * BLINK_OFFSET });
+  }
+  const upcomingByValue = new Map(upcoming.map(c => [c.value, c]));
+  for (let i = 0; i < cells.length; i++) upcomingByValue.get(cells[i])?.cells.push(i);
+  for (const country of upcoming) {
+    const near = country.cells.map(i => { const col = i % cols, row = (i - col) / cols; return { i, d: Math.hypot(col - country.cx, row - country.cy) }; })
+      .sort((a, b) => a.d - b.d || a.i - b.i);
+    const close = near.filter(c => c.d <= SOON_CORE);
+    country.core = (close.length >= SOON_CORE_MIN ? close : near.slice(0, SOON_CORE_MIN)).map(c => c.i);
+  }
+  return { countries, byValue, arcs, introEnd, rippleAt, alpha, soon: upcoming, soonByValue: upcomingByValue, soonAt: introEnd };
 }
 
 function mount(figure, grid) {
@@ -194,12 +226,17 @@ function mount(figure, grid) {
   const layer = document.createElement('canvas');
   const lctx = layer.getContext('2d');
   if (!lctx) throw new Error('no 2d context');
+  // The steady tint of the countries in preparation: opaque mint dots, painted once per size and blitted with the tint alpha.
+  const tintLayer = document.createElement('canvas');
+  const tctx = tintLayer.getContext('2d');
+  if (!tctx) throw new Error('no 2d context');
 
   let lit = [];
   try { lit = JSON.parse(figure.dataset.lit || '[]'); } catch { lit = []; }
   if (!Array.isArray(lit)) lit = [];
   const { cols, rows, cells } = grid;
-  const scene = buildScene(grid, lit.filter(entry => entry && typeof entry.code === 'string'));
+  const soonItems = [...figure.querySelectorAll('figcaption [data-soon]')].filter(item => item.dataset.soon);
+  const scene = buildScene(grid, lit.filter(entry => entry && typeof entry.code === 'string'), soonItems.map(item => ({ code: item.dataset.soon })));
   const root = document.documentElement;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   canvas.style.aspectRatio = `${cols} / ${rows}`;
@@ -239,6 +276,16 @@ function mount(figure, grid) {
       lctx.fillStyle = `rgba(${LAND},${(key / 100).toFixed(2)})`;
       dots(lctx, list, radius);
     }
+    paintTint();
+  }
+
+  function paintTint() {
+    tintLayer.width = canvas.width;
+    tintLayer.height = canvas.height;
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    tctx.clearRect(0, 0, width, height);
+    tctx.fillStyle = `rgb(${MINT})`;
+    dots(tctx, scene.soon.flatMap(country => country.cells), Math.max(LIT_RADIUS * pitch, LIT_RADIUS_MIN));
   }
 
   function resize() {
@@ -315,32 +362,90 @@ function mount(figure, grid) {
     ctx.globalAlpha = 1;
   }
 
-  // Name tags beside the lit countries (wide screens only; the list under the map stays for screen readers).
+  // Name tags beside the marked countries (wide screens only; the list under the map stays for screen readers).
   const pins = new Map();
-  for (const el of figure.querySelectorAll('.world-lights-pin')) pins.set(el.dataset.code, el);
+  for (const el of figure.querySelectorAll('.world-lights-pin')) pins.set(el.dataset.code || el.dataset.soon, el);
   function showPin(country, on) {
     const pin = pins.get(country.code);
     if (!pin || country.pinOn === on) return;
     country.pinOn = on;
     pin.classList.toggle('is-on', on);
   }
+  // Each tag tries its candidates in order: preferred side above, other side above, preferred side below, other side below.
+  // A candidate is out when it leaves the map sideways, covers another marked country, or runs into a tag already placed.
   function placePins() {
     if (!pitch) return;
-    const left = canvas.offsetLeft, top = canvas.offsetTop, right = left + width;
-    for (const country of scene.countries) {
+    const left = canvas.offsetLeft, top = canvas.offsetTop, right = left + width, bottom = top + height;
+    const marked = [...scene.countries, ...scene.soon].map(c => ({ code: c.code, x: left + px(c.cx), y: top + px(c.cy) }));
+    const placed = [];
+    for (const country of marked) {
       const pin = pins.get(country.code);
       const w = pin ? pin.offsetWidth : 0, h = pin ? pin.offsetHeight : 0;
       if (!w) continue; // hidden by the stylesheet on narrow screens
-      const x = left + px(country.cx), y = top + px(country.cy);
-      const flip = x + PIN_GAP + w > right;
-      const edge = Math.min(Math.max(flip ? x - PIN_GAP - w : x + PIN_GAP, left), Math.max(left, right - w));
-      pin.style.left = `${edge}px`;
-      pin.style.top = `${Math.max(y - PIN_GAP, top + h)}px`;
-      pin.classList.toggle('is-left', flip);
-      // The leader runs from the tag's corner to the country, also when the tag was pushed back inside the map.
-      const dx = x - (flip ? edge + w - 3 : edge + 3), dy = y - (Math.max(y - PIN_GAP, top + h) - 3);
+      const { x, y } = country;
+      const prefer = x >= left + width / 2 ? 'right' : 'left';
+      const other = prefer === 'right' ? 'left' : 'right';
+      const options = [[prefer, 'above'], [other, 'above'], [prefer, 'below'], [other, 'below']].map(([side, rise]) => {
+        const edge = side === 'right' ? x + PIN_GAP : x - PIN_GAP - w;
+        // "above" is the tag drawn upward from y - gap; "below" is drawn downward from y + gap.
+        const near = rise === 'above' ? Math.max(y - PIN_GAP, top + h) : Math.min(y + PIN_GAP, Math.max(top, bottom - h));
+        const box = { left: edge, right: edge + w, top: rise === 'above' ? near - h : near, bottom: rise === 'above' ? near : near + h };
+        return { side, rise, edge, near, box, inside: edge >= left && edge + w <= right };
+      });
+      const clear = o => o.inside
+        && !marked.some(m => m.code !== country.code && m.x >= o.box.left - 6 && m.x <= o.box.right + 6 && m.y >= o.box.top - 6 && m.y <= o.box.bottom + 6)
+        && !placed.some(p => o.box.left < p.right + 4 && o.box.right > p.left - 4 && o.box.top < p.bottom + 4 && o.box.bottom > p.top - 4);
+      let pick = options.find(clear) || options.find(o => o.inside);
+      if (!pick) {
+        // Nothing fits sideways: the old rule, flipped to the left and pushed back inside the map.
+        const flip = x + PIN_GAP + w > right;
+        const edge = Math.min(Math.max(flip ? x - PIN_GAP - w : x + PIN_GAP, left), Math.max(left, right - w));
+        const near = options[0].near;
+        pick = { side: flip ? 'left' : 'right', rise: 'above', edge, near, box: { left: edge, right: edge + w, top: near - h, bottom: near } };
+      }
+      placed.push(pick.box);
+      const isLeft = pick.side === 'left', isBelow = pick.rise === 'below';
+      pin.style.left = `${pick.edge}px`;
+      pin.style.top = `${pick.near}px`;
+      pin.classList.toggle('is-left', isLeft);
+      pin.classList.toggle('is-below', isBelow);
+      // The leader runs from the tag's near corner to the country, also when the tag was pushed back inside the map.
+      const dx = x - (isLeft ? pick.edge + w - 3 : pick.edge + 3), dy = y - (isBelow ? pick.near + 3 : pick.near - 3);
       pin.style.setProperty?.('--lead', `${Math.hypot(dx, dy)}px`);
       pin.style.setProperty?.('--lead-angle', `${Math.atan2(dy, dx) * 180 / Math.PI}deg`);
+    }
+  }
+
+  // Countries in preparation: the country in a steady mint tint (no blinking, the whole country would be too much) ...
+  const soonLevel = (t, still) => (still ? 1 : ease((t - scene.soonAt) / SOON_IN));
+  function soonTint(t, still) {
+    const level = soonLevel(t, still);
+    for (const country of scene.soon) showPin(country, level > 0);
+    if (level <= 0 || !scene.soon.length) return;
+    ctx.globalAlpha = SOON_TINT * level;
+    ctx.drawImage(tintLayer, 0, 0, width, height);
+    ctx.globalAlpha = 1;
+  }
+  // ... and a beacon at its centre that blinks: a halo, a few bright dots and a thin ring (lit countries never have the ring).
+  function beacons(t, still) {
+    const radius = Math.max(LIT_RADIUS * pitch, LIT_RADIUS_MIN);
+    for (const country of scene.soon) {
+      const level = soonLevel(t, still);
+      if (level <= 0) continue;
+      const b = still ? SOON_STILL : blink((t - scene.soonAt) / BLINK_PERIOD + country.phase);
+      const x = px(country.cx), y = px(country.cy), reach = SOON_HALO * pitch;
+      const halo = ctx.createRadialGradient(x, y, 0, x, y, reach);
+      halo.addColorStop(0, `rgba(${MINT},${(SOON_HALO_ALPHA * b * level).toFixed(3)})`);
+      halo.addColorStop(1, `rgba(${MINT},0)`);
+      ctx.fillStyle = halo;
+      ctx.fillRect(x - reach, y - reach, reach * 2, reach * 2);
+      ctx.fillStyle = `rgba(${CORE_DOT},${(b * level).toFixed(3)})`;
+      dots(ctx, country.core, radius);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(${MINT},${((0.35 + 0.45 * b) * level).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(x, y, SOON_RING * pitch, 0, TAU);
+      ctx.stroke();
     }
   }
 
@@ -374,6 +479,7 @@ function mount(figure, grid) {
     ctx.drawImage(layer, 0, 0, width, height);
 
     if (!still) ripples(t);
+    soonTint(t, still);
 
     const radius = Math.max(LIT_RADIUS * pitch, LIT_RADIUS_MIN);
     ctx.fillStyle = LIT_DOT;
@@ -430,6 +536,7 @@ function mount(figure, grid) {
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
+    beacons(t, still);
 
     if (still) return;
     for (const arc of scene.arcs) {
@@ -470,9 +577,10 @@ function mount(figure, grid) {
     if (still) {
       // One still picture with every light already on.
       started = true;
-      clock = Math.max(clock, scene.introEnd);
+      // The countries in preparation are fully in too, so the loop picks up from there without fading them in again.
+      clock = Math.max(clock, scene.introEnd + SOON_IN);
     }
-    if (!still && started && onScreen && !document.hidden && scene.countries.length && width) {
+    if (!still && started && onScreen && !document.hidden && (scene.countries.length || scene.soon.length) && width) {
       needsPaint = false;
       if (!raf) { last = performance.now(); lastDraw = -1e9; raf = requestAnimationFrame(frame); }
       return;
@@ -481,10 +589,13 @@ function mount(figure, grid) {
     if (needsPaint && width) { needsPaint = false; draw(); }
   }
 
-  // Pointing at a country: its name and whether it is lit or next.
+  // Pointing at a country: its name and whether it is lit, in preparation or next.
   const captions = new Map();
   for (const item of figure.querySelectorAll('figcaption [data-code]')) {
     captions.set(item.dataset.code, { name: item.querySelector('b')?.textContent || '', status: item.querySelector('span')?.textContent || '' });
+  }
+  for (const item of soonItems) {
+    captions.set(item.dataset.soon, { name: item.querySelector('b')?.textContent || '', status: item.querySelector('span')?.textContent || '' });
   }
   const nextLabel = figure.querySelector('[data-next]')?.textContent || '';
   let names = null;
@@ -532,7 +643,7 @@ function mount(figure, grid) {
       const code = grid.codes[value - 1];
       const country = scene.byValue.get(value);
       tipName.textContent = nameOf(code);
-      tipStatus.textContent = (country && captions.get(code)?.status) || nextLabel;
+      tipStatus.textContent = ((country || scene.soonByValue.get(value)) && captions.get(code)?.status) || nextLabel;
       tipName.hidden = !tipName.textContent;
       shown = value;
       tip.hidden = false;
