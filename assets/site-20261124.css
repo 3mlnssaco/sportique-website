@@ -450,10 +450,10 @@ main > .section:last-child { padding-bottom: var(--section); }
   html:not([data-motion="off"]) .world-lights-dot--soon { animation: world-lights-blink 1.5s linear infinite; }
 }
 @keyframes world-lights-blink {
-  0% { opacity: .12; }
+  0% { opacity: .4; }
   12% { opacity: 1; }
   55% { opacity: 1; }
-  67%, 100% { opacity: .12; }
+  67%, 100% { opacity: .4; }
 }
 @media (forced-colors: active) {
   .world-lights-dot { background: GrayText; }

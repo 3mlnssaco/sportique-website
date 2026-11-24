@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs';
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 
-const LABEL = '세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳, 깜빡이는 나라는 준비 중인 곳이고, 나머지는 앞으로 켤 곳입니다.'
-const SOON_STATUS = '준비 중';;
+const LABEL = '세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳, 고리로 표시한 나라는 준비 중인 곳이고, 나머지는 앞으로 켤 곳입니다. 나라 이름은 이어지는 목록에 있습니다.';
+const SOON_STATUS = '준비 중';
 
 export function worldLights(config = read('../world-lights.json')) {
   const names = new Map(read('../../assets/world-countries-20260921.json').countries.map(c => [c.code, c.name]));

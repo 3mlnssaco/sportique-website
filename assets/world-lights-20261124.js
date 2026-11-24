@@ -226,6 +226,10 @@ function mount(figure, grid) {
   const layer = document.createElement('canvas');
   const lctx = layer.getContext('2d');
   if (!lctx) throw new Error('no 2d context');
+  // The steady tint of the countries in preparation: opaque mint dots, painted once per size and blitted with the tint alpha.
+  const tintLayer = document.createElement('canvas');
+  const tctx = tintLayer.getContext('2d');
+  if (!tctx) throw new Error('no 2d context');
 
   let lit = [];
   try { lit = JSON.parse(figure.dataset.lit || '[]'); } catch { lit = []; }
@@ -272,6 +276,16 @@ function mount(figure, grid) {
       lctx.fillStyle = `rgba(${LAND},${(key / 100).toFixed(2)})`;
       dots(lctx, list, radius);
     }
+    paintTint();
+  }
+
+  function paintTint() {
+    tintLayer.width = canvas.width;
+    tintLayer.height = canvas.height;
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    tctx.clearRect(0, 0, width, height);
+    tctx.fillStyle = `rgb(${MINT})`;
+    dots(tctx, scene.soon.flatMap(country => country.cells), Math.max(LIT_RADIUS * pitch, LIT_RADIUS_MIN));
   }
 
   function resize() {
@@ -405,14 +419,12 @@ function mount(figure, grid) {
   // Countries in preparation: the country in a steady mint tint (no blinking, the whole country would be too much) ...
   const soonLevel = (t, still) => (still ? 1 : ease((t - scene.soonAt) / SOON_IN));
   function soonTint(t, still) {
-    const radius = Math.max(LIT_RADIUS * pitch, LIT_RADIUS_MIN);
-    for (const country of scene.soon) {
-      const level = soonLevel(t, still);
-      showPin(country, level > 0);
-      if (level <= 0) continue;
-      ctx.fillStyle = `rgba(${MINT},${(SOON_TINT * level).toFixed(3)})`;
-      dots(ctx, country.cells, radius);
-    }
+    const level = soonLevel(t, still);
+    for (const country of scene.soon) showPin(country, level > 0);
+    if (level <= 0 || !scene.soon.length) return;
+    ctx.globalAlpha = SOON_TINT * level;
+    ctx.drawImage(tintLayer, 0, 0, width, height);
+    ctx.globalAlpha = 1;
   }
   // ... and a beacon at its centre that blinks: a halo, a few bright dots and a thin ring (lit countries never have the ring).
   function beacons(t, still) {
@@ -565,7 +577,8 @@ function mount(figure, grid) {
     if (still) {
       // One still picture with every light already on.
       started = true;
-      clock = Math.max(clock, scene.introEnd);
+      // The countries in preparation are fully in too, so the loop picks up from there without fading them in again.
+      clock = Math.max(clock, scene.introEnd + SOON_IN);
     }
     if (!still && started && onScreen && !document.hidden && (scene.countries.length || scene.soon.length) && width) {
       needsPaint = false;

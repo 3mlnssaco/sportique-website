@@ -534,3 +534,17 @@ test('the product list and the UniQLab page show the same study flow', () => {
     assertFlow(mainOf(read(fileOf(prefix, 'products/uniqlab/'))), lang, `${prefix}products/uniqlab`);
   }
 });
+
+test('the legend ring of a country in preparation never fades out of sight and keeps its outline in forced colours', () => {
+  // Its low point stays readable (the map beacon has its own, lower level in the canvas script).
+  const keyframes = css.match(/@keyframes world-lights-blink\s*\{((?:[^{}]*\{[^{}]*\})*[^{}]*)\}/);
+  assert.ok(keyframes, 'the blink keyframes');
+  const opacities = [...keyframes[1].matchAll(/opacity:\s*([\d.]+)/g)].map(match => parseFloat(match[1]));
+  assert.ok(opacities.length >= 4 && Math.min(...opacities) >= 0.4 && Math.max(...opacities) === 1, opacities.join(' '));
+  // Forced colours: no fill and no shadow, a system-colour outline instead.
+  const forced = rules.filter(rule => rule.selector === '.world-lights-dot--soon' && rule.context.some(media => /forced-colors:\s*active/.test(media)));
+  assert.equal(forced.length, 1);
+  assert.match(forced[0].body, /background:\s*transparent/);
+  assert.match(forced[0].body, /box-shadow:\s*none/);
+  assert.match(forced[0].body, /border:\s*[\d.]+px\s+solid\s+Highlight/);
+});

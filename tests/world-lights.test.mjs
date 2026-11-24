@@ -78,7 +78,7 @@ test('the markup keeps every word translatable and puts no Korean in data attrib
   const copy = allCopy;
   assert.match(html, /^<figure class="world-lights" data-world-lights data-lit='\[\{"code":"KR","order":1\}\]'>/);
   assert.match(html, /<canvas role="img" aria-label="세계 지도\. [^"]+"><\/canvas>/);
-  assert.ok(html.includes('aria-label="세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳, 깜빡이는 나라는 준비 중인 곳이고, 나머지는 앞으로 켤 곳입니다."'));
+  assert.ok(html.includes('aria-label="세계 지도. 불이 켜진 나라는 지금 서비스가 닿은 곳, 고리로 표시한 나라는 준비 중인 곳이고, 나머지는 앞으로 켤 곳입니다. 나라 이름은 이어지는 목록에 있습니다."'));
   const legend = [...html.match(/<ul class="world-lights-legend">(.*?)<\/ul>/)[1].matchAll(/<li>(.*?)<\/li>/g)].map(m => m[1]);
   assert.deepEqual(legend, [
     '<i class="world-lights-dot world-lights-dot--lit" aria-hidden="true"></i><span>켜진 곳</span>',
@@ -132,7 +132,7 @@ function fakeContext(log) {
   const count = name => { log[name] = (log[name] || 0) + 1; };
   let lastArc = null;
   // What the beacons of countries in preparation paint, with the frame (number of clearRect calls so far) each belongs to.
-  log.gradients = []; log.cores = []; log.rings = []; log.tints = []; log.whites = [];
+  log.gradients = []; log.cores = []; log.rings = []; log.tints = []; log.whites = []; log.layers = [];
   return new Proxy(state, {
     get(target, key) {
       if (key in target) return target[key];
@@ -141,6 +141,11 @@ function fakeContext(log) {
         const entry = { frame: log.clearRect || 0, x, y, r: r1, stops: [] };
         log.gradients.push(entry);
         return { addColorStop(at, color) { entry.stops.push(color); } };
+      };
+      // The tint of the countries in preparation is a second offscreen layer (the first is the land), blitted with the tint alpha.
+      if (key === 'drawImage') return source => {
+        count('drawImage');
+        if (source === log.layers[1]) log.tints.push({ frame: log.clearRect || 0, alpha: target.globalAlpha });
       };
       if (key === 'clearRect') return () => { count('clearRect'); (log.frames ??= []).push([]); };
       if (key === 'arc') return (x, y, r) => {
@@ -152,7 +157,6 @@ function fakeContext(log) {
       if (key === 'fill') return () => {
         count('fill'); count(`fill ${target.fillStyle}`);
         const frame = log.clearRect || 0, style = String(target.fillStyle);
-        if (/^rgba\(111,241,174,0\.\d{3}\)$/.test(style)) log.tints.push({ frame, alpha: parseFloat(style.split(',')[3]) });
         if (style === '#fff') log.whites.push({ x: lastArc[0], y: lastArc[1] });
         if (isRipple(target.fillStyle) && lastArc && log.frames?.length) log.frames.at(-1).push({ x: lastArc[0], y: lastArc[1], alpha: target.globalAlpha });
       };
@@ -217,7 +221,7 @@ function world({ lit = [{ code: 'KR', order: 1 }], captions = { KR: ['대한민�
   Object.assign(doc, {
     documentElement: root, hidden: false,
     querySelectorAll: () => [figure],
-    createElement: tag => { const node = new Node(tag); if (tag === 'canvas') node.getContext = () => fakeContext({}); return node; },
+    createElement: tag => { const node = new Node(tag); if (tag === 'canvas') { node.getContext = () => fakeContext({}); log.layers.push(node); } return node; },
   });
   const observer = name => class { constructor(fn) { env.observers[name] = fn; } observe() {} };
   Object.assign(globalThis, {
@@ -601,6 +605,60 @@ test('the motion switch turns the blinking on and off again without losing the b
   assert.equal(env.log.clearRect, frame, 'and no loop');
 });
 
+test('the motion switch back on picks up the preparing lights at full strength: no fade-in again', async () => {
+  const env = world({ soon: SOON, motion: 'off' });
+  await (await load())();
+  env.see();
+  assert.equal(env.log.clearRect, 1, 'one still picture');
+  assert.deepEqual(env.log.tints.map(entry => entry.alpha), [0.34]);
+  const still = env.log.clearRect;
+
+  delete env.root.dataset.motion;
+  env.observers.mutation();
+  env.run(0.017); // the first frame of the loop
+  assert.equal(env.log.clearRect, still + 1);
+  const tint = env.log.tints.filter(entry => entry.frame > still);
+  assert.deepEqual(tint.map(entry => entry.alpha), [0.34], 'the first tint is already the full tint');
+  const first = levels(env.log, 'MN').get(still + 1);
+  assert.ok(first >= 0.5, `the beacon is already blinking at a level, not fading in from dark: ${first}`);
+  assert.ok(env.soonPins.every(pin => pin.classes.has('is-on')));
+
+  // And the other way round: one still picture again, tint at the same strength.
+  env.root.dataset.motion = 'off';
+  env.observers.mutation();
+  assert.equal(env.frames.length, 0);
+  assert.equal(env.log.clearRect, still + 2, 'one still frame');
+  assert.equal(env.log.tints.at(-1).alpha, 0.34);
+  env.run(1);
+  assert.equal(env.log.clearRect, still + 2, 'and no loop');
+});
+
+test('a map with countries in preparation only still runs its loop, and stops off screen or in a hidden tab', async () => {
+  const env = world({ lit: [], captions: {}, soon: SOON });
+  await (await load())();
+  assert.equal(env.requested, 0, 'nothing before it is seen');
+  env.see();
+  assert.equal(env.requested, 1, 'the beacons need the loop');
+  env.run(5);
+  const mn = [...levels(env.log, 'MN').values()];
+  assert.ok(mn.length > 100, `${mn.length} frames`);
+  assert.ok(Math.max(...mn) >= 0.99 && Math.min(...mn) <= 0.13, 'they blink across ticks');
+  assert.deepEqual([...new Set(env.log.tints.filter(entry => entry.alpha === 0.34).map(entry => entry.alpha))], [0.34]);
+  assert.ok(env.soonPins.every(pin => pin.classes.has('is-on')));
+
+  env.doc.hidden = true;
+  env.doc.fire('visibilitychange');
+  assert.equal(env.frames.length, 0, 'a hidden tab stops it');
+  const paused = env.log.clearRect;
+  env.see(0);
+  env.doc.hidden = false;
+  env.doc.fire('visibilitychange');
+  assert.equal(env.frames.length, 0, 'off screen stays stopped');
+  assert.equal(env.log.clearRect, paused);
+  env.see(0.6);
+  assert.equal(env.frames.length, 1, 'back in view it runs again');
+});
+
 test('pointing at a country in preparation says so, in the words of the page', async () => {
   const env = world({ soon: SOON });
   await (await load())();
@@ -659,4 +717,55 @@ test('with three name tags on a 1216px map no tag covers another country, none o
     const below = pin.classes.has('is-below');
     assert.ok(below ? angle < 0 : angle > 0, `${code}: leader angle ${angle}`);
   }
+});
+
+// The box a name tag covers, from what the script wrote on it (top is the tag's near line: its bottom edge above the light, its top edge below).
+const boxOf = pin => {
+  const left = parseFloat(pin.style.left), top = parseFloat(pin.style.top), w = pin.offsetWidth, h = pin.offsetHeight;
+  const below = pin.classes.has('is-below'), side = pin.classes.has('is-left') ? 'left' : 'right';
+  return { side, rise: below ? 'below' : 'above', left, right: left + w, top: below ? top : top - h, bottom: below ? top + h : top };
+};
+const apart = (a, b) => a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top;
+
+test('a tag is moved when the only thing wrong with its first place is a tag already there', async () => {
+  // Kazakhstan is placed first. Mongolia's first place (right, above) is inside the map and covers no centre, but would sit on Kazakhstan's tag.
+  const env = world({ lit: [], captions: {}, soon: { KZ: ['카자흐스탄', '준비 중'], MN: ['몽골', '준비 중'] } });
+  await (await load())();
+  const [kz, mn] = env.soonPins.map(boxOf);
+  const [kx, ky] = centreOf('KZ'), [mx, my] = centreOf('MN');
+  const w = 150, h = 32;
+  assert.deepEqual([kz.side, kz.rise], ['right', 'above']);
+  const first = { left: mx + 28, right: mx + 28 + w, top: my - 28 - h, bottom: my - 28 };
+  assert.ok(first.left >= 0 && first.right <= WIDTH, 'its first place is inside the map');
+  assert.ok(![[kx, ky], [mx, my]].some(([x, y]) => x >= first.left - 6 && x <= first.right + 6 && y >= first.top - 6 && y <= first.bottom + 6), 'and covers no centre');
+  assert.ok(!apart(first, kz) && first.left < kz.right + 4 && first.right > kz.left - 4 && first.top < kz.bottom + 4 && first.bottom > kz.top - 4, 'but it would sit on the tag already placed');
+  assert.notDeepEqual([mn.side, mn.rise], ['right', 'above'], 'so it goes elsewhere');
+  assert.ok(apart(mn, kz), 'and the two tags do not overlap');
+  assert.ok(mn.left >= 0 && mn.right <= WIDTH && mn.top >= 0);
+});
+
+test('the leader line of a name tag runs from the tag corner to the light, for each of the four placements', async () => {
+  const seen = new Set();
+  const scenes = [
+    { KZ: ['카자흐스탄', '준비 중'], MN: ['몽골', '준비 중'] }, // right/above and right/below
+    { FJ: ['피지', '준비 중'], VU: ['바누아투', '준비 중'] }, // left/above and left/below
+  ];
+  for (const soon of scenes) {
+    const env = world({ lit: [], captions: {}, soon });
+    await (await load())();
+    Object.keys(soon).forEach((code, k) => {
+      const pin = env.soonPins[k], box = boxOf(pin), [x, y] = centreOf(code);
+      seen.add(`${box.side}/${box.rise}`);
+      // The line starts 3px inside the corner of the tag that is nearest the light: the top corner of a tag drawn downward, the bottom corner of one drawn upward.
+      const startX = box.side === 'right' ? box.left + 3 : box.right - 3;
+      const startY = box.rise === 'above' ? box.bottom - 3 : box.top + 3;
+      const lead = Math.hypot(x - startX, y - startY), angle = Math.atan2(y - startY, x - startX) * 180 / Math.PI;
+      assert.ok(Math.abs(parseFloat(pin.style['--lead']) - lead) < 0.01, `${code} ${box.side}/${box.rise}: --lead ${pin.style['--lead']} vs ${lead}`);
+      assert.ok(Math.abs(parseFloat(pin.style['--lead-angle']) - angle) < 0.01, `${code} ${box.side}/${box.rise}: --lead-angle ${pin.style['--lead-angle']} vs ${angle}`);
+      // The angle really points from the tag to the light: stepping along it from the start lands on the light.
+      const rad = parseFloat(pin.style['--lead-angle']) * Math.PI / 180, length = parseFloat(pin.style['--lead']);
+      assert.ok(Math.hypot(startX + length * Math.cos(rad) - x, startY + length * Math.sin(rad) - y) < 0.01);
+    });
+  }
+  assert.deepEqual([...seen].sort(), ['left/above', 'left/below', 'right/above', 'right/below']);
 });
