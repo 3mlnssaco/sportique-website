@@ -548,3 +548,14 @@ test('the legend ring of a country in preparation never fades out of sight and k
   assert.match(forced[0].body, /box-shadow:\s*none/);
   assert.match(forced[0].body, /border:\s*[\d.]+px\s+solid\s+Highlight/);
 });
+
+test('no published file still describes servers in Mongolia or the United States', () => {
+  // The whole folder is published, so a file that no page links to is still public.
+  for (const gone of ['assets/world-home-20260921.js', 'assets/world-home-20260921.css']) assert.ok(!exists(gone), gone);
+  const assets = readdirSync('assets').filter(name => /\.(?:js|css|json|svg|html|txt)$/.test(name)).map(name => `assets/${name}`);
+  const fragments = readdirSync('scripts').filter(name => name.endsWith('.html')).map(name => `scripts/${name}`);
+  assert.ok(assets.length > 5 && fragments.length > 0, 'the published text files were found');
+  for (const file of [...assets, ...fragments, ...allFiles]) {
+    for (const rejected of ['서버 거점', 'US WEST', '글로벌 공통 서버', '현지 데이터 리전']) assert.ok(!read(file).includes(rejected), `${file}: ${rejected}`);
+  }
+});
