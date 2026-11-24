@@ -3,7 +3,7 @@
 // sentences that carry the same distinctions, and that the old pictures are not brought back.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { read, count, block, mainOf, said, fileOf, languages, productIds, allFiles } from './support.mjs';
+import { withoutLegendBlink, read, count, block, mainOf, said, fileOf, languages, productIds, allFiles } from './support.mjs';
 
 const contexts = {
   uniqdata: 'UniQdata.io에서는 개인이 자신의 기록을 관리하고, 누구에게 어떤 기록을 공유할지 선택합니다.',
@@ -95,7 +95,7 @@ test('The sharing design is a numbered list of words: the old animation is gone 
   // The old check: three animated diagrams, each with a pause button and a reduced-motion rule. With no animation there is
   // nothing to pause; what stays is that it is not brought back and that the recipient is still named per product.
   for (const file of allFiles) assert.doesNotMatch(read(file), /data-sharing-motion|data-sharing-pause|sharing-travel-bundle|sharing-depth|sharing-architecture/, file);
-  assert.doesNotMatch(read('assets/site-20261124.css'), /@keyframes|animation(?:-name|-play-state)?\s*:/);
+  assert.doesNotMatch(withoutLegendBlink(read('assets/site-20261124.css')), /@keyframes|animation(?:-name|-play-state)?\s*:/);
   for (const { prefix } of languages) for (const path of ['products/', ...productIds.map(id => `products/${id}/`)]) {
     const main = mainOf(read(fileOf(prefix, path)));
     assert.doesNotMatch(main, /<(?:canvas|video|marquee)\b|<svg\b[^>]*>\s*<animate|autoplay/, `${prefix}${path}`);

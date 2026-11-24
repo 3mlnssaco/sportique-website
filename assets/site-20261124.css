@@ -441,12 +441,24 @@ main > .section:last-child { padding-bottom: var(--section); }
 .world-lights-legend li { display: flex; align-items: center; gap: 9px; }
 .world-lights-list li { display: flex; align-items: baseline; gap: 8px; }
 .world-lights-list b { color: var(--ink, #edf3ff); font-weight: 600; }
-/* Legend marks: a lit dot and a dot still to light (a little stronger than on the map so the small mark reads). */
+/* Legend marks: a lit dot, a ring for a country in preparation, and a dot still to light (a little stronger than on the map so the small mark reads). */
 .world-lights-dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: rgba(137, 152, 180, .45); }
 .world-lights-dot--lit { background: var(--mint, #6ff1ae); box-shadow: 0 0 0 4px rgba(111, 241, 174, .16); }
+/* In preparation: a hollow ring (same outer size) that blinks at the rhythm of the beacon on the map (1.5 s). */
+.world-lights-dot--soon { background: transparent; box-shadow: inset 0 0 0 1.5px var(--mint, #6ff1ae); }
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="off"]) .world-lights-dot--soon { animation: world-lights-blink 1.5s linear infinite; }
+}
+@keyframes world-lights-blink {
+  0% { opacity: .12; }
+  12% { opacity: 1; }
+  55% { opacity: 1; }
+  67%, 100% { opacity: .12; }
+}
 @media (forced-colors: active) {
   .world-lights-dot { background: GrayText; }
   .world-lights-dot--lit { background: Highlight; }
+  .world-lights-dot--soon { background: transparent; box-shadow: none; border: 1.5px solid Highlight; box-sizing: border-box; }
   .world-lights canvas { forced-color-adjust: none; background: #05060a; }
 }
 
@@ -460,12 +472,18 @@ main > .section:last-child { padding-bottom: var(--section); }
 }
 .world-lights-pin b { color: var(--ink, #edf3ff); font-weight: 600; }
 .world-lights-pin span { color: var(--mint, #6ff1ae); }
+/* In preparation is not lit: its status is muted, so "UniQdata live" stays the only mint status. */
+.world-lights-pin--soon span { color: var(--muted, #8b97ad); }
 .world-lights-pin.is-on { opacity: 1; }
 .world-lights-pin::before {
   content: ""; position: absolute; left: 3px; bottom: 3px; width: var(--lead, 43.8px); height: 1px;
   background: rgba(237, 243, 255, .35); transform-origin: 0 50%; transform: rotate(var(--lead-angle, 135deg));
 }
 .world-lights-pin.is-left::before { left: calc(100% - 3px); transform: rotate(var(--lead-angle, 45deg)); }
+/* Drawn downward from below the country: the tag starts at its own top, the leader leaves the top corner and points up. */
+.world-lights-pin.is-below { transform: none; }
+.world-lights-pin.is-below::before { bottom: auto; top: 3px; transform: rotate(var(--lead-angle, -135deg)); }
+.world-lights-pin.is-below.is-left::before { transform: rotate(var(--lead-angle, -45deg)); }
 @media (prefers-reduced-motion: no-preference) {
   .world-lights-pin { transition: opacity .3s ease; }
 }

@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
-import { read, json, exists, count, escapeHtml, block, blocks, mainOf, visibleText, twoLines, cssRules, localReferences, runtimeScripts, inlineScripts, said, fileOf, paths, koreanFiles, allFiles, languages, productIds, publicRecords, SITE_CSS, SITE_JS } from './support.mjs';
+import { withoutLegendBlink, read, json, exists, count, escapeHtml, block, blocks, mainOf, visibleText, twoLines, cssRules, localReferences, runtimeScripts, inlineScripts, said, fileOf, paths, koreanFiles, allFiles, languages, productIds, publicRecords, SITE_CSS, SITE_JS } from './support.mjs';
 
 const home = read('index.html');
 const css = read(SITE_CSS);
@@ -83,6 +83,22 @@ test('the world map sits under the statement and lights only the countries liste
     const pinned = [...figure.matchAll(/<div class="world-lights-pin" data-code="([^"]+)" aria-hidden="true"><b>([^<]+)<\/b><span>([^<]+)<\/span><\/div>/g)].map(match => match.slice(1));
     assert.deepEqual(pinned, expected, file);
     assert.equal(count(figure, /data-code="/g), expected.length * 2, `${file}: no other country is marked`);
+    // Countries in preparation: the same facts as words and as tags, and a legend with the three states in order.
+    const soon = json('scripts/world-lights.json').soon;
+    assert.deepEqual(soon.map(entry => entry.code), ['MN', 'US']);
+    const expectedSoon = soon.map(({ code, status }) => [code, said(names.get(code), lang), said(status, lang)]);
+    const listedSoon = [...block(figure, '<figcaption').matchAll(/<li data-soon="([^"]+)"><b>([^<]+)<\/b> <span>([^<]+)<\/span><\/li>/g)].map(match => match.slice(1));
+    assert.deepEqual(listedSoon, expectedSoon, file);
+    const pinnedSoon = [...figure.matchAll(/<div class="world-lights-pin world-lights-pin--soon" data-soon="([^"]+)" aria-hidden="true"><b>([^<]+)<\/b><span>([^<]+)<\/span><\/div>/g)].map(match => match.slice(1));
+    assert.deepEqual(pinnedSoon, expectedSoon, file);
+    assert.equal(count(figure, /data-soon="/g), expectedSoon.length * 2, `${file}: no other country is marked as in preparation`);
+    const legend = block(figure, 'class="world-lights-legend"');
+    assert.deepEqual([...legend.matchAll(/<li><i class="(world-lights-dot[^"]*)" aria-hidden="true"><\/i><span[^>]*>([^<]+)<\/span><\/li>/g)].map(match => match.slice(1)), [
+      ['world-lights-dot world-lights-dot--lit', said('켜진 곳', lang)],
+      ['world-lights-dot world-lights-dot--soon', said('준비 중', lang)],
+      ['world-lights-dot', said('앞으로 켤 곳', lang)],
+    ], file);
+    assert.equal(count(legend, /<li>/g), 3, file);
     assert.match(figure, /<canvas role="img" aria-label="[^"]+"><\/canvas>/, file);
   }
 });
@@ -296,7 +312,12 @@ test('pages read without scripts and nothing moves for a visitor who asked for r
   // The three.js copy is no longer loaded; while it stays in the repository its licence stays with it.
   if (exists('assets/vendor/three.module.js') || exists('assets/vendor/three.core.js')) assert.ok(exists('assets/vendor/LICENSE'));
   // Stylesheet: no keyframe animation, and every transition is inside a no-preference block.
-  assert.doesNotMatch(css, /@keyframes|animation(?:-name)?\s*:|scroll-timeline|view-timeline|scroll-behavior\s*:\s*smooth/);
+  // The one exception is the legend ring of a country in preparation: it blinks only without a reduced-motion preference and not when the motion switch is off.
+  assert.doesNotMatch(withoutLegendBlink(css), /@keyframes|animation(?:-name)?\s*:|scroll-timeline|view-timeline|scroll-behavior\s*:\s*smooth/);
+  const blinking = rules.filter(rule => /animation\s*:/.test(rule.body));
+  assert.equal(blinking.length, 1);
+  assert.match(blinking[0].selector, /^html:not\(\[data-motion="off"\]\) \.world-lights-dot--soon$/);
+  assert.ok(blinking[0].context.some(media => /prefers-reduced-motion:\s*no-preference/.test(media)));
   const moving = rules.filter(rule => /transition(?:-[a-z]+)?\s*:/.test(rule.body));
   assert.ok(moving.length > 0);
   for (const { selector, context } of moving) assert.ok(context.some(media => /prefers-reduced-motion:\s*no-preference/.test(media)), `${selector} moves without asking`);
