@@ -1,32 +1,19 @@
 import {productValueVisual} from './product-value-visuals.mjs';
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,readdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-const sourceData=JSON.parse(readFileSync('assets/public-records.json','utf8'));
-// Preserve source records while withdrawing YAKSON from the public company site.
-const withoutYakson=records=>records.filter(record=>!/YAKSON|약손/i.test(JSON.stringify(record)));
-const data={...sourceData,products:sourceData.products.filter(product=>product.id!=='yakson'),founder:withoutYakson(sourceData.founder),awards:withoutYakson(sourceData.awards)};
+import {data,latestFirst,awardLabels,awardCategory,awardsRecords,awardCategories} from './site/data.mjs';
 const assetVersion=createHash('sha256').update(readFileSync('assets/neon-site-20260921.css')).update(readFileSync('assets/neon-site-20260921.js')).digest('hex').slice(0,12);
 const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const arrow='<span aria-hidden="true">↗</span>';
 const login='https://org.sportique.biz/workspace';
 const routes=[['/','홈'],['/products/','제품'],['/about/','회사'],['/vision/','비전'],['/founder/','대표'],['/awards/','이력'],['/contact/','문의']];
 const emblem=`<div class="brand-emblem" data-brand-emblem role="img" aria-label="SportiQue의 S 말풍선 입체 로고"><img class="emblem-static" src="/assets/sportique-emblem-fallback.svg" alt="" width="420" height="420"><canvas class="logo-canvas" aria-hidden="true"></canvas></div>`;
-function header(path){const links=routes.map(([url,name])=>`<a href="${url}" ${path===url?'aria-current="page"':''}>${name}</a>`).join('');return `<a class="skip-link" href="#main">본문으로 이동</a><header class="site-header"><a class="brand original-brand" href="/" aria-label="SportiQue 홈"><img src="/assets/sportique-icon.jpg" alt="SportiQue" width="82" height="82"></a><nav class="desktop-nav" aria-label="주 메뉴">${links}</nav><div class="header-actions"><a class="language-switch" href="/en${path}" lang="en" aria-label="Switch to English" title="Switch to English"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg><span>EN</span></a><a class="institution-login" href="${login}">기관 로그인 ${arrow}</a><details class="mobile-menu"><summary aria-label="전체 메뉴 열기"><span></span><span></span></summary><nav aria-label="모바일 메뉴">${links}<a href="/institutions/">기관 포털 안내</a><a class="mobile-only-login" href="${login}">기관 로그인 ${arrow}</a></nav></details></div></header>`;}
+function header(path){const links=routes.map(([url,name])=>`<a href="${url}" ${path===url?'aria-current="page"':''}>${name}</a>`).join('');return `<a class="skip-link" href="#main">본문으로 이동</a><header class="site-header"><a class="brand original-brand" href="/" aria-label="SportiQue 홈"><img src="/assets/sportique-emblem-fallback.svg" alt="" width="24" height="30"><span class="brand-word">SportiQue</span></a><nav class="desktop-nav" aria-label="주 메뉴">${links}</nav><div class="header-actions"><a class="language-switch" href="/en${path}" lang="en" aria-label="Switch to English" title="Switch to English"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg><span>EN</span></a><a class="institution-login" href="${login}">기관 로그인 ${arrow}</a><details class="mobile-menu"><summary aria-label="전체 메뉴 열기"><span></span><span></span></summary><nav aria-label="모바일 메뉴">${links}<a href="/institutions/">기관 포털 안내</a><a class="mobile-only-login" href="${login}">기관 로그인 ${arrow}</a></nav></details></div></header>`;}
 const footer=`<footer class="site-footer"><div class="footer-brand"><a class="original-brand" href="/" aria-label="SportiQue 홈"><img src="/assets/sportique-icon.jpg" alt="SportiQue" width="150" height="150" loading="lazy"></a><p>개인이 관리하는 건강기록,<br>활용도 직접 선택합니다.</p></div><nav aria-label="추가 정보">${routes.slice(1).map(([url,name])=>`<a href="${url}">${name}</a>`).join('')}<a href="/institutions/">기관 포털</a></nav><div class="footer-bottom"><span>© 2026 SportiQue. All rights reserved.</span><a href="mailto:hello@sportique.biz">hello@sportique.biz</a><span>Personal health data network</span></div></footer>`;
 function pageHero(kicker,title,description,ghost){return `<section class="page-hero"><div class="page-marker" aria-hidden="true">${ghost}</div><p class="eyebrow">${kicker}</p><h1>${title}</h1><p class="page-lead">${description}</p></section>`;}
 const cta=`<section class="closing-cta"><p class="eyebrow">LET’S MAKE IT MATTER</p><h2>다음 이야기는,<br><em>함께.</em></h2><a class="filled-link" href="/contact/">SportiQue에 연락하기 ${arrow}</a></section>`;
-// Live store listings and their published screenshots (see assets/verified/asset-provenance.json).
-const appStore='https://apps.apple.com/kr/app/uniqdata/id6760312240';
-const playStore='https://play.google.com/store/apps/details?id=io.uniqdata.app';
-const storeButtons=`<div class="store-buttons"><a class="store-button" href="${appStore}" target="_blank" rel="noopener noreferrer"><small>Download on the</small><strong>App Store</strong></a><a class="store-button" href="${playStore}" target="_blank" rel="noopener noreferrer"><small>GET IT ON</small><strong>Google Play</strong></a></div>`;
-const appShots=[
- ['home','홈 · 기록 추가','수기 기록, 사진 촬영, 파일 업로드로 흩어진 기록을 모읍니다.'],
- ['ai-chat','UniQdata AI','궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.'],
- ['report','리포트','쌓인 기록을 AI와 함께 비진단 요약으로 확인합니다.'],
- ['routine','루틴 추천','나에게 맞는 루틴을 골라 일정에 넣고 실천합니다.'],
- ['checkin','체크인','정해진 시간마다 오늘의 컨디션을 남깁니다.'],
-];
-function liveApp(headingLevel='h2'){return `<section class="live-app" id="uniqdata-app" aria-labelledby="live-app-title"><div class="live-app-heading"><div><p class="eyebrow">LIVE NOW · APP STORE · GOOGLE PLAY</p><${headingLevel} id="live-app-title">지금 스토어에서<br><em>내려받는 UniQdata.</em></${headingLevel}></div><div><p>UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 스토어에 공개된 실제 앱 화면입니다.</p>${storeButtons}</div></div><ul class="live-app-shots">${appShots.map(([id,title,body])=>`<li><figure><img src="/assets/verified/uniqdata-appstore-${id}-20260926.webp" alt="UniQdata 앱 화면: ${title}" width="645" height="1398" loading="lazy"><figcaption><strong>${title}</strong><span>${body}</span></figcaption></figure></li>`).join('')}</ul><p class="live-app-note">App Store 등록 화면(버전 1.0.18). 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.</p></section>`;}
+import {appStore,playStore,storeButtons,appShots} from './site/ui.mjs';
+function liveApp(headingLevel='h2'){return `<section class="live-app" id="uniqdata-app" aria-labelledby="live-app-title"><svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs><clipPath id="app-shot-phone" clipPathUnits="objectBoundingBox"><rect x=".2186" y=".3119" width=".5628" height=".5279" rx=".0868" ry=".0401"/></clipPath><clipPath id="app-shot-report" clipPathUnits="objectBoundingBox"><rect x=".2186" y=".3119" width=".5628" height=".5279" rx=".0868" ry=".0401"/><rect x=".1705" y=".4313" width=".6651" height=".3505" rx=".0124" ry=".0057"/></clipPath></defs></svg><div class="live-app-heading"><div><p class="eyebrow">LIVE NOW · APP STORE · GOOGLE PLAY</p><${headingLevel} id="live-app-title">지금 스토어에서<br><em>내려받는 UniQdata.</em></${headingLevel}></div><div><p>UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 스토어에 공개된 실제 앱 화면입니다.</p>${storeButtons}</div></div><ul class="live-app-shots">${appShots.map(([id,title,body])=>`<li><figure><div class="app-shot"><img class="app-shot-img app-shot-img--${id}" src="/assets/verified/uniqdata-appstore-${id}-20260926.webp" alt="UniQdata 앱 화면: ${title}" width="645" height="1398" loading="lazy"></div><figcaption><strong>${title}</strong><span>${body}</span></figcaption></figure></li>`).join('')}</ul><p class="live-app-note">App Store 등록 화면(버전 1.0.18). 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.</p></section>`;}
 // External profiles reviewers can open. Leave a value empty until the URL is confirmed; empty links are not rendered.
 const founderProfiles=[
  ['LinkedIn','https://www.linkedin.com/in/seunghun-daniel-lee/'],
@@ -74,28 +61,7 @@ function productDetailPage(p){
   <div class="product-detail-actions">${detail.links}</div>
  </article>`;
 }
-// Unknown days remain unknown in the display; ranges sort by their ending date.
-function dateKey({date,sortDate}){
- if(date==='현재')return sortDate??Infinity;
- const value=String(sortDate??date);
- if(/^\d{8}$/.test(value))return Number(value);
- const range=value.split(value.includes('.')?/[-~–—]/:/[~–—]/);
- const start=(range[0].match(/\d+/g)??[]).map(Number);
- const end=(range.at(-1).match(/\d+/g)??[]).map(Number);
- const parts=end[0]>=1000?end:end.length===1&&start.length===3?[...start.slice(0,2),...end]:[start[0],...end];
- return (parts[0]||0)*10000+(parts[1]||0)*100+(parts[2]||0);
-}
-const latestFirst=(a,b)=>dateKey(b)-dateKey(a);
 const founderItems=[...data.founder].sort(latestFirst).map((r,i)=>`<article class="record-item" id="founder-${i}"><div class="record-date">${esc(r.date)}</div><div><h3>${esc(r.title)}</h3><p class="record-meta">${esc(r.meta)}</p><p>${esc(r.body)}</p></div><span class="record-index">${String(i+1).padStart(2,'0')}</span></article>`).join('');
-const awardLabels={award:'수상',selected:'선정',presentation:'발표',fieldwork:'해외 활동',company:'회사 연혁'};
-const awardCategory=r=>r.category||(/수상|상$/.test(r.title)?'award':/선정/.test(r.title)?'selected':'presentation');
-const awardsRecords=[...data.awards].sort(latestFirst);
-// The Mongolia programme began with team preparation before incorporation; keep its July visit date visible.
-const mongoliaVisit=awardsRecords.findIndex(r=>r.title==='2026 적정기술 기반 청년 창업 글로벌 실증 지원사업 몽골 현지 프로그램 참가');
-const incorporation=awardsRecords.findIndex(r=>r.title==='스포티큐 주식회사 설립');
-if(mongoliaVisit<0||incorporation<0)throw new Error('Mongolia and incorporation milestones must exist');
-[awardsRecords[mongoliaVisit],awardsRecords[incorporation]]=[awardsRecords[incorporation],awardsRecords[mongoliaVisit]];
-const awardCategories=[...new Set(awardsRecords.map(awardCategory))];
 const awardFilters=awardCategories.map(category=>`<button type="button" data-filter="${esc(category)}" aria-pressed="false">${esc(awardLabels[category]??category)} ${awardsRecords.filter(r=>awardCategory(r)===category).length}</button>`).join('');
 function awardEvidence(record){
  const evidence=record.evidence;if(!evidence)return '';
@@ -141,8 +107,17 @@ const pages=[
  {path:'/institutions/',title:'Institutions — 기관 포털',description:'기관 관리자·직원 및 서비스 실무자의 로그인과 신규 기관 도입을 안내합니다.',body:pageHero('INSTITUTION ACCESS','기관의 다음 업무,<br><em>여기서 이어갑니다.</em>','이미 개통된 계정은 로그인으로.<br>새로운 협업은 기관 도입 신청으로 시작하세요.','ACCESS')+`<section class="access-grid"><article class="access-card primary-access"><p class="eyebrow">EXISTING ACCESS</p><h2>기관 서비스 로그인</h2><p>기관 관리자·직원은 기관 계정으로 관리 업무를 이어갑니다. 서비스 실무자는 UniQdata 개인 계정으로 로그인해 현재 연결된 업무 플랫폼을 확인합니다.</p><a class="filled-link" href="${login}">로그인 화면 보기 ${arrow}</a><small>기관 계정은 기관 이메일·비밀번호로 인증합니다. 개인 계정은 UniQdata 로그인으로 이어집니다.</small></article><article class="access-card"><p class="eyebrow">NEW INSTITUTION</p><h2>새로운 기관 도입</h2><p>대학교·연구기관·병원·체육기관·기업. 필요한 제품을 선택하고 기관 도입 절차를 시작합니다.</p><a class="outline-link" href="https://org.sportique.biz/onboarding">기관 도입 신청 ${arrow}</a><small>기관 확인과 제품별 계정 개통은 별도로 진행됩니다.</small></article></section><section class="access-note"><div><span class="eyebrow">ONE HUB. DISTINCT ROLES.</span><h2>각자의 역할에 맞는 공간.</h2></div><div><p>기관 운영 계정과 UniQdata 개인 계정의 권한은 다릅니다. 로그인 화면에서 맡은 역할에 맞는 경로를 선택하세요.</p><a class="text-link" href="${login}">로그인 경로 보기 ${arrow}</a><a class="text-link" href="mailto:support@sportique.biz">기관 계정 지원 문의 ${arrow}</a></div></section>`},
  {path:'/404.html',title:'404 — 새로운 경로로',description:'요청한 페이지를 찾을 수 없습니다. SportiQue 홈과 제품으로 이동하세요.',body:pageHero('SIGNAL LOST / 404','길을 잃었나요?<br><em>다시 연결합니다.</em>','요청한 페이지가 없거나 주소가 바뀌었습니다.','404')+`<section class="not-found-actions"><a class="filled-link" href="/">홈으로 돌아가기 ${arrow}</a><a class="outline-link" href="/products/">제품 보기 ${arrow}</a></section>`}
 ];
-for(const p of pages){const output=p.path==='/'?'index.html':p.path==='/404.html'?'404.html':p.path.slice(1)+'index.html';if(output.includes('/'))mkdirSync(output.slice(0,output.lastIndexOf('/')),{recursive:true});writeFileSync(output,`<!doctype html>\n<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(p.description)}"><meta name="theme-color" content="#050609"><meta property="og:title" content="SportiQue — ${esc(p.title)}"><meta property="og:description" content="${esc(p.description)}"><meta property="og:image" content="https://www.sportique.biz/assets/sportique-header.jpg"><link rel="canonical" href="https://www.sportique.biz${p.path}"><link rel="icon" href="/assets/sportique-icon.jpg"><title>SportiQue — ${esc(p.title)}</title><link rel="stylesheet" href="/assets/neon-site-20260921.css?v=${assetVersion}"><script type="module" src="/assets/neon-site-20260921.js?v=${assetVersion}"></script></head><body data-page="${p.path==='/'?'home':esc(p.path)}"><div class="ambient-glow" aria-hidden="true"></div>${header(p.path)}<main id="main">${p.body}</main>${footer}</body></html>\n`);}
-console.log(`Built ${pages.length} public pages; rendered ${data.founder.length} founder and ${data.awards.length} award records.`);
+// 2026-11-24 design. scripts/site/styles/*.css are joined in file-name order into one stylesheet, and a path that has
+// a module in scripts/site/pages/ (one page object, or an array of them for data-driven paths) is built with the new frame (scripts/site/shell.mjs). Every other path keeps the frame below
+// until its page is moved over.
+const styleDir='scripts/site/styles';
+writeFileSync('assets/site-20261124.css',readdirSync(styleDir).filter(name=>name.endsWith('.css')).sort().map(name=>readFileSync(`${styleDir}/${name}`,'utf8').trim()).join('\n\n')+'\n');
+const {page:framePage}=await import('./site/shell.mjs');
+const movedPages=new Map();
+for(const name of readdirSync('scripts/site/pages').filter(name=>name.endsWith('.mjs')).sort()){const moved=(await import(`./site/pages/${name}`)).default;for(const one of [moved].flat()){if(movedPages.has(one.path))throw new Error(`Two page modules build ${one.path}`);movedPages.set(one.path,one);}}
+for(const path of movedPages.keys())if(!pages.some(p=>p.path===path))throw new Error(`scripts/site/pages has ${path}, which is not in the page list`);
+for(const p of pages){const output=p.path==='/'?'index.html':p.path==='/404.html'?'404.html':p.path.slice(1)+'index.html';if(output.includes('/'))mkdirSync(output.slice(0,output.lastIndexOf('/')),{recursive:true});const moved=movedPages.get(p.path);if(moved){writeFileSync(output,framePage({path:moved.path,title:moved.title,description:moved.description,body:await moved.body()}));continue;}writeFileSync(output,`<!doctype html>\n<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(p.description)}"><meta name="theme-color" content="#050609"><meta property="og:title" content="SportiQue — ${esc(p.title)}"><meta property="og:description" content="${esc(p.description)}"><meta property="og:image" content="https://www.sportique.biz/assets/sportique-header.jpg"><link rel="canonical" href="https://www.sportique.biz${p.path}"><link rel="icon" href="/assets/sportique-icon.jpg"><title>SportiQue — ${esc(p.title)}</title><link rel="stylesheet" href="/assets/neon-site-20260921.css?v=${assetVersion}"><script type="module" src="/assets/neon-site-20260921.js?v=${assetVersion}"></script></head><body data-page="${p.path==='/'?'home':esc(p.path)}"><div class="ambient-glow stage" data-stage aria-hidden="true"><canvas></canvas></div>${header(p.path)}<main id="main">${p.body}</main>${footer}</body></html>\n`);}
+console.log(`Built ${pages.length} public pages (${movedPages.size} on the new frame); rendered ${data.founder.length} founder and ${data.awards.length} award records.`);
 
 const {buildEnglish}=await import("./build-english.mjs");
 buildEnglish(pages.map(page=>page.path));

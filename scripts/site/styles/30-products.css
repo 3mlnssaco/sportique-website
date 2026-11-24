@@ -1,0 +1,31 @@
+/* 30-products: /products/ and /products/<id>/ (scripts/site/pages/products.mjs, product-detail.mjs). Text and space only. */
+
+/* Product blocks on the list: name, description left; feature rows right. */
+.product-block { border-top: 1px solid var(--line); }
+.product-block .split-main h2 { font-size: clamp(30px, 3.6vw, 48px); }
+.feature-rows { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.feature-rows li { padding: 16px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 17px; font-weight: 550; line-height: 1.5; letter-spacing: -.01em; }
+.split-side > .note { max-width: 520px; }
+.product-block .split-main > .link { margin-top: 4px; }
+
+/* Second lead under the hero lead. */
+.page-hero .lead + .lead { margin-top: 12px; }
+
+/* Sharing: four numbered steps, then the one-line context rows. */
+.sharing .head { margin-bottom: clamp(32px, 4vw, 56px); }
+.sharing-separation { max-width: 720px; margin-bottom: clamp(32px, 4vw, 56px); }
+.steps--four .step-body h3 { margin-top: 3px; }
+.steps--four + .rows { margin-top: clamp(48px, 6vw, 80px); }
+@media (min-width: 901px) {
+  .steps--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .steps--four .step-body h3 { margin-top: 0; }
+}
+
+/* Detail page. */
+.product-back { padding-top: clamp(24px, 4vh, 40px); }
+.back-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); font-size: 15px; font-weight: 500; }
+.back-link:hover { color: var(--ink); }
+.product-back + .page-hero { padding-top: clamp(16px, 3vh, 40px); }
+.lead--support { color: var(--muted); }
+.product-now { margin-top: 16px; }
+.product-actions { padding-top: 0; }
