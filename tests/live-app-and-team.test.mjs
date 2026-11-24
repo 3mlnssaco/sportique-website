@@ -32,6 +32,10 @@ test('home, products and UniQdata detail show the four next-version screens labe
     assert.equal(count(app, /class="phone"/g), 4, file);
     assert.ok(app.includes(`>${said('다음 버전 화면', lang)}</span><span>${said('준비 중', lang)}</span>`), `${file}: next-version label`);
     assert.ok(app.includes(said(lead, lang)), `${file}: the lead says these are next-version screens`);
+    // The heading used to say "download now" right above the pictures; it names the next version instead.
+    const heading = block(app, 'id="live-app-title"');
+    for (const line of ['스토어의 UniQdata,', '다음 버전을 준비합니다.']) assert.ok(heading.includes(`>${said(line, lang)}<`), `${file}: heading line ${line}`);
+    assert.ok(!page.includes('지금 스토어에서') && !page.includes('Available now'), `${file}: the old heading is gone`);
     assert.ok(!page.includes('스토어에 공개된 실제 앱 화면') && !page.includes('actual app screens'), `${file}: not presented as the store's screens`);
     assert.ok(app.includes(said(exampleNotice, lang)), `${file}: example-screen notice`);
     if (lang === 'en') assert.ok(app.includes('This is the design of the next version, which is in preparation, and its screens differ from the app now in the store (version 1.0.18). Names and values shown are examples, not real user records.'), `${file}: English notice word for word`);

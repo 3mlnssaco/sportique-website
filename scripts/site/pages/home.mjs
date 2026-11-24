@@ -21,7 +21,7 @@ const hero = world => `<section class="hero product-hero" aria-labelledby="hero-
 
 const world = `<section class="section" id="world" aria-labelledby="world-title"><div class="wrap split"><div class="split-main">${tag('네트워크')}<h2 id="world-title">${lines('국가가 달라도,', '개인의 기록을 이어 씁니다.')}</h2><p>해외에서 진료를 받거나 가족과 떨어져 지낼 때도, 필요한 기록을 이어서 활용할 수 있어야 합니다. 공유할 기록과 대상은 개인이 정합니다.</p>${link({ href: '/vision/', label: '회사 비전 보기' })}</div><ul class="rules"><li>공유할 사람과 항목을 개인이 선택.</li><li>나라가 달라도 이어지도록.</li><li>AI·앱마다 허용할 범위를 따로 선택.</li></ul></div></section>`;
 
-const app = `<section class="section" id="uniqdata-app" aria-labelledby="live-app-title"><div class="wrap">${head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('지금 스토어에서', '내려받는 UniQdata.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.', extra: storeButtons })}${appTile()}</div></section>`;
+const app = `<section class="section" id="uniqdata-app" aria-labelledby="live-app-title"><div class="wrap">${head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('스토어의 UniQdata,', '다음 버전을 준비합니다.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.', extra: storeButtons })}${appTile()}</div></section>`;
 
 const problems = [
   ['기록이 제각각 흩어집니다.', '진료·검진·복약·기기 기록은 기관과 서비스마다 다른 형식과 계정 안에 남습니다.'],
