@@ -69,7 +69,7 @@ export const appShots = [
   ['report', '리포트'],
   ['vault', '보관함'],
 ];
-export const appShotNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+export const appShotNotice = '준비 중인 다음 버전 화면입니다. 지금 스토어의 앱과 다르며, 화면 속 이름과 수치는 예시입니다.';
 export const notDiagnosisNotice = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
 
 // Phone frame drawn in css (.phone): the exported screens have no device bezel. Tall screens show their top part only.
@@ -127,8 +127,8 @@ export function cta() {
   return ctaBand({ title: lines('다음 이야기는,', '함께.'), actions: button({ href: '/contact/', label: 'SportiQue에 연락하기', arrow: '↗' }) });
 }
 
-// Dated list: date column (with the optional 준비 시작 line) + content column. No numbers.
-// item: { date, started, kind, title, meta, venue, body, category, id, evidence: { image, imageAlt, imageLabel, links: [{ href, label }] } }
+// Dated list: date column + content column. No numbers.
+// item: { date, kind, title, meta, venue, body, category, id, evidence: { image, imageAlt, imageLabel, links: [{ href, label }] } }
 // `category` lands in data-category (a plain id, for pills() filtering); `kind` is the small tag text above the title.
 // timeline([{ date: '2026.07', kind: '선정', title: '...', meta: '주최 기관', body: '...' }])
 export function timeline(items, { level = 'h3' } = {}) {
@@ -137,9 +137,9 @@ export function timeline(items, { level = 'h3' } = {}) {
     const anchors = links.map(({ href, label }) => link({ href, label }).replace('<a class="link"', '<a class="link" target="_blank" rel="noopener noreferrer"')).join('');
     return figure || anchors ? `<div class="tl-evidence">${figure}${anchors ? `<div class="tl-links">${anchors}</div>` : ''}</div>` : '';
   };
-  const item = ({ date, started = '', kind = '', title, meta = '', venue = '', body = '', category = '', id = '', evidence: proof }) => {
+  const item = ({ date, kind = '', title, meta = '', venue = '', body = '', category = '', id = '', evidence: proof }) => {
     const iso = String(date).replaceAll('.', '-');
-    const time = `<time class="tl-date"${/^\d{4}-\d{2}(?:-\d{2})?$/.test(iso) ? ` datetime="${iso}"` : ''}>${esc(date)}${started ? `<small>준비 시작 ${esc(started)}</small>` : ''}</time>`;
+    const time = `<time class="tl-date"${/^\d{4}-\d{2}(?:-\d{2})?$/.test(iso) ? ` datetime="${iso}"` : ''}>${esc(date)}</time>`;
     return `<li class="tl-item"${category ? ` data-category="${esc(category)}"` : ''}${id ? ` id="${esc(id)}"` : ''}>${time}<div class="tl-body">${kind ? `<p class="tag tag--sm">${esc(kind)}</p>` : ''}<${level}>${esc(title)}</${level}>${meta ? `<p class="tl-meta">${esc(meta)}</p>` : ''}${venue ? `<p class="tl-meta">${esc(venue)}</p>` : ''}${body ? `<p>${esc(body)}</p>` : ''}${evidence(proof)}</div></li>`;
   };
   return `<ol class="timeline">${items.map(item).join('')}</ol>`;
@@ -161,7 +161,7 @@ export function split(left, right) {
 // The order in which a study runs, as six steps. `kind` says which product the step happens in: lab (UniQLab),
 // person (UniQdata) or core (between the two); the lanes are told by position and words, not by colour.
 // Used on the home page, the product list and the UniQLab page. Show researchFlowNote under it.
-export const researchFlowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 위 순서는 현재 설계 기준입니다.';
+export const researchFlowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 순서는 바뀔 수 있습니다.';
 const flowSteps = [
   ['lab', '연구기관이 UniQLab에서', '연구를 제안합니다.', '연구 목적, 요청 항목, 기간, 대상자 조건을 정해 제출합니다.'],
   ['core', 'SportiQue가', '제안을 검토합니다.', '검토를 마친 연구만 참여자에게 열립니다.'],

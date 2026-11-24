@@ -12,6 +12,6 @@ for (const pill of pills) {
       item.hidden = value !== 'all' && item.dataset.category !== value;
       if (!item.hidden) count++;
     }
-    if (counter) counter.textContent = english ? `${count} public record${count === 1 ? '' : 's'}` : `공개 기록 ${count}건`;
+    if (counter) counter.textContent = english ? `${count} ${count === 1 ? 'entry' : 'entries'}` : `이력 ${count}건`;
   });
 }

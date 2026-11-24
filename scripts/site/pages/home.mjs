@@ -54,12 +54,12 @@ const uses = [
   ['개인은 기록을 리포트로 확인합니다.', '서비스 중', '쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.'],
   ['개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '서비스 중', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.'],
   ['보호자에게 필요한 기록만 공유합니다.', '계획', '어느 보호자에게 어떤 항목을 언제까지 공유할지 직접 정하고, 필요하면 접근을 철회합니다.'],
-  ['해외에서도 필요한 기록을 꺼내 씁니다.', '계획', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.'],
-  ['참여할 연구와 공유할 기록을 고릅니다.', '개발 중', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
+  ['해외에서도 필요한 기록을 꺼내 씁니다.', '계획', '국가별 법과 정책이 허용하는 범위에서, 허용한 기록만 필요한 곳에 연결합니다.'],
+  ['참여할 연구와 공유할 기록을 고릅니다.', '개발 중', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
   ['돌봄·복약 앱에 기록을 연결합니다.', '계획', 'Bodab의 가족 돌봄, MediQ의 진료 준비처럼 같은 기록을 목적에 맞게 활용합니다.'],
   ['이용 이력을 다시 확인합니다.', '개발 중', '무엇을 어디에 왜 썼는지 확인하고, 동의 범위를 줄이거나 철회한 뒤 이후 활용에 반영합니다.'],
 ];
-const value = `<section class="section" id="value" aria-labelledby="value-title"><div class="wrap">${head({ tag: '쓰임', id: 'value-title', title: lines('모인 기록은,', '선택지가 됩니다.'), lead: '기록이 모이면 쓸 수 있는 길이 늘어납니다. 지금 되는 것, 만들고 있는 것, 계획하는 것을 표시해 두었습니다.' })}<ul class="pairs" aria-label="개인 기록의 활용 경로">${uses.map(([title, status, body]) => `<li><div class="name-line"><h3>${esc(title)}</h3>${statusTag(status)}</div><p>${esc(body)}</p></li>`).join('')}</ul><p class="note">모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.</p></div></section>`;
+const value = `<section class="section" id="value" aria-labelledby="value-title"><div class="wrap">${head({ tag: '쓰임', id: 'value-title', title: lines('모인 기록은,', '선택지가 됩니다.'), lead: '기록이 모이면 쓸 수 있는 길이 늘어납니다.' })}<ul class="pairs" aria-label="개인 기록의 활용 경로">${uses.map(([title, status, body]) => `<li><div class="name-line"><h3>${esc(title)}</h3>${statusTag(status)}</div><p>${esc(body)}</p></li>`).join('')}</ul><p class="note">모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.</p></div></section>`;
 
 // The three products as equal link tiles, then the sub-app and SDK tile (not a link): each says what the product is in the sentence the product list uses.
 const productBlurbs = {

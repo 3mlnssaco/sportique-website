@@ -22,7 +22,7 @@ const product = p => section({
 
 export default {
   path: '/products/',
-  title: 'Products — 개인의 기록에서 선택한 활용까지',
+  title: '제품 — 개인의 기록에서 선택한 활용까지',
   description: 'UniQdata를 출발점으로 한 개인 건강관리, Bodab 어르신용 앱과 UniQLab 연구 운영.',
   body() {
     return [hero, app, ...data.products.map(product), listSharing(data.products), cta()].join('\n');

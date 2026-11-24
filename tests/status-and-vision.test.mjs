@@ -72,7 +72,7 @@ test('each of the seven uses carries its own status: two live, two in developmen
       if (body) assert.ok(text(item, lang, body), `${prefix}${body}`);
       assert.deepEqual(marks(item), [mark(status, lang)], `${prefix}${title}`);
     });
-    assert.ok(text(value, lang, '기록이 모이면 쓸 수 있는 길이 늘어납니다. 지금 되는 것, 만들고 있는 것, 계획하는 것을 표시해 두었습니다.'), prefix);
+    assert.ok(text(value, lang, '기록이 모이면 쓸 수 있는 길이 늘어납니다.'), prefix);
     assert.ok(text(value, lang, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.'), prefix);
   }
 });
@@ -117,7 +117,7 @@ test('the live mark appears only on what is live: UniQdata and the items that wo
 test('product list and details show each product status, the planned MediQ and MindQ line and the new scope sentences', () => {
   const scope = {
     uniqlab: '연구팀과 기관을 위한 운영 도구로 개발하고 있습니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.',
-    bodab: 'Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다. 기관의 돌봄 요청·담당자 배정 업무는 이 앱의 범위가 아닙니다.',
+    bodab: 'Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다.',
   };
   for (const { prefix, lang } of languages) {
     const list = read(fileOf(prefix, 'products/'));
@@ -128,7 +128,7 @@ test('product list and details show each product status, the planned MediQ and M
       assert.ok(detail.indexOf('class="name-line"') < detail.indexOf('class="lead'), `${prefix}${id}: status sits at the product name`);
     }
     for (const html of [block(list, 'id="uniqdata"'), mainOf(read(fileOf(prefix, 'products/uniqdata/')))]) {
-      assert.ok(text(html, lang, 'DataQ는 원본과 출처를 보존하면서 반입·표준화 후보를 만드는 내부 단계입니다. MediQ와 MindQ는 이후 UniQdata 안에서 열 인앱 경험으로 계획하고 있습니다.'), prefix);
+      assert.ok(text(html, lang, 'DataQ는 원본과 출처를 보존하면서 기록의 형식·항목·단위를 맞추는 단계입니다. MediQ와 MindQ는 이후 UniQdata 안에서 열 인앱 경험으로 계획하고 있습니다.'), prefix);
       const modules = block(html, 'class="note-status"');
       assert.deepEqual(marks(modules), [mark('계획', lang)], prefix);
       assert.ok(html.indexOf('class="note"') < html.indexOf('class="note-status"'), prefix);

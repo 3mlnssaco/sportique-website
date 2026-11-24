@@ -23,7 +23,7 @@
   "연구기관은 UniQLab에서,": "Institutions work in UniQLab,",
   "개인은 UniQdata에서.": "individuals in UniQdata.",
   "연구기관이 연구를 제안하면, 개인이 요청을 보고 직접 동의합니다. 동의한 범위의 기록만 연구에 연결됩니다.": "When an institution proposes a study, the individual reads the request and consents directly. Only records within the consented scope are connected to the study.",
-  "UniQLab과 앱의 연구 참여 기능은 개발 중이며, 위 순서는 현재 설계 기준입니다.": "UniQLab and study participation in the app are in development, and the order above follows the current design.",
+  "UniQLab과 앱의 연구 참여 기능은 개발 중이며, 순서는 바뀔 수 있습니다.": "The research participation features of UniQLab and the app are in development, and the order may change.",
   "기관 도입 문의": "Ask about adoption",
   "UniQLab 자세히": "More on UniQLab",
   "UniQLab 흐름 보기": "See the UniQLab flow"

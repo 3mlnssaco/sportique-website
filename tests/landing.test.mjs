@@ -121,7 +121,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
   for (const marker of order) { const at = home.indexOf(marker); assert.ok(at > last, marker); last = at; }
   // The old English caps label "DATA FRAGMENTATION" is gone; the section says it in its own heading.
   assert.match(block(home, 'id="problem"'), twoLines('흩어진 기록은', '개인의 선택을 막습니다.'));
-  for (const text of ['건강기록은 한곳에.', '선택은 개인에게.', '개인의 선택을 막습니다.', 'AI 모델이나 플랫폼', 'DataQ', '형식을 표준화합니다.', '개인 DB로 쌓습니다.', 'AI·공유를 선택합니다.', '국가가 달라도,', '개인의 기록을 이어 씁니다.', '국가별 정책·데이터 레지던시 조건', '가족이 어르신의 복약·활동·진료', '더 큰 문제를 찾았습니다.', '복약 확인 상태', '여러 곳의 기록을 대조하고 서로 다시 물어야', '2025년 XRPL', '건강기록 원문은 개인 DB에', '나라가 달라도 이어지도록.']) assert.ok(home.includes(text), text);
+  for (const text of ['건강기록은 한곳에.', '선택은 개인에게.', '개인의 선택을 막습니다.', 'AI 모델이나 플랫폼', 'DataQ', '형식을 표준화합니다.', '개인 DB로 쌓습니다.', 'AI·공유를 선택합니다.', '국가가 달라도,', '개인의 기록을 이어 씁니다.', '국가별 법과 정책이 허용하는 범위에서', '가족이 어르신의 복약·활동·진료', '더 큰 문제를 찾았습니다.', '복약 확인 상태', '여러 곳의 기록을 대조하고 서로 다시 물어야', '2025년 XRPL', '건강기록 원문은 개인 DB에', '나라가 달라도 이어지도록.']) assert.ok(home.includes(text), text);
   // Three steps in a real order (standardise, store, choose) and no confirmation step.
   const system = block(home, 'id="system"');
   const steps = [...block(system, '<ol').matchAll(/<li>([\s\S]*?)<\/li>/g)].map(match => visibleText(match[1]));
@@ -134,7 +134,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
 });
 
 test('assembled records open the full personal-use path without converting research compensation into a SportiQue payout claim', () => {
-  for (const text of ['개인은 기록을 리포트로 확인합니다.', '쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.', '개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.', '보호자에게 필요한 기록만 공유합니다.', '해외에서도 필요한 기록을 꺼내 씁니다.', '참여할 연구와 공유할 기록을 고릅니다.', '돌봄·복약 앱에 기록을 연결합니다.', '이용 이력을 다시 확인합니다.', '지급 주체가 정한 방식으로 처리', '국가별 정책·데이터 레지던시 조건']) assert.ok(home.includes(text), text);
+  for (const text of ['개인은 기록을 리포트로 확인합니다.', '쌓인 기록을 기간별 비진단 요약으로 다시 확인합니다.', '개인은 자신의 기록을 바탕으로 AI에 질문합니다.', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.', '보호자에게 필요한 기록만 공유합니다.', '해외에서도 필요한 기록을 꺼내 씁니다.', '참여할 연구와 공유할 기록을 고릅니다.', '돌봄·복약 앱에 기록을 연결합니다.', '이용 이력을 다시 확인합니다.', '지급 주체가 정한 방식으로 처리', '국가별 법과 정책이 허용하는 범위에서']) assert.ok(home.includes(text), text);
   for (const rejected of ['데이터 판매', '토큰 보상', 'SportiQue가 직접 지급']) assert.ok(!home.includes(rejected), rejected);
 });
 
@@ -228,8 +228,7 @@ test('remaining public founder and award records preserve dates and metadata wit
       const own = items.filter(item => item.includes(`<${key === 'awards' ? 'h2' : 'h3'}>${said(record.title, lang)}</${key === 'awards' ? 'h2' : 'h3'}>`));
       assert.equal(own.length, 1, `${file}: ${record.title}`);
       for (const field of ['date', 'meta', 'organizer', 'venue', 'body']) if (record[field]) assert.ok(own[0].includes(`>${said(record[field], lang)}<`), `${file}: ${record[field]}`);
-      assert.equal(own[0].includes('<small>'), Boolean(record.started), `${file}: ${record.title} preparation start`);
-      if (record.started) assert.ok(own[0].includes(`<small>${said(`준비 시작 ${record.started}`, lang)}</small>`), `${file}: ${record.started}`);
+      assert.ok(!own[0].includes('<small>'), `${file}: ${record.title} shows no preparation-start line`);
     }
   }
   assert.ok(!JSON.stringify(publicRecords).includes('피우다'));
@@ -253,7 +252,7 @@ test('each product on the list links to its own detail page, and each detail giv
     const detail = read(`products/${product.id}/index.html`);
     assert.equal(visibleText(block(detail, '<h1')), product.name);
     assert.ok(detail.includes('활용 예시'));
-    assert.ok(detail.includes('현재 범위'));
+    assert.ok(detail.includes('지금 상태'));
     for (const value of [product.description, product.detail, ...product.features]) assert.ok(detail.includes(escapeHtml(value)), value);
     assert.ok(detail.includes('href="/products/"'));
   }
@@ -274,7 +273,7 @@ test('public details lead to the relevant institution product without promoting 
 test('product page states each role and stage without presenting four equal products', () => {
   const page = read('products/index.html');
   assert.match(block(page, '<h1'), twoLines('개인이 기록을 모으고,', '활용을 선택합니다.'));
-  for (const text of ['UniQdata는 흩어진 건강기록을 개인 DB에서 관리하는 출발점입니다.', '같은 기반의 어르신용 앱 Bodab과 동의한 연구를 운영하는 UniQLab을 소개합니다.', 'DataQ는 원본과 출처를 보존하면서 반입·표준화 후보를 만드는 내부 단계입니다.', 'Bodab은 어르신이 큰 글씨와 짧은 단계로', 'FamilyCare에서 동의 범위 안에서 확인할 수 있습니다.', 'UniQLab은 연구자와 기관이 연구 준비']) assert.ok(page.includes(text), text);
+  for (const text of ['UniQdata는 흩어진 건강기록을 개인 DB에서 관리하는 출발점입니다.', '같은 기반의 어르신용 앱 Bodab과 동의한 연구를 운영하는 UniQLab을 소개합니다.', 'DataQ는 원본과 출처를 보존하면서 기록의 형식·항목·단위를 맞추는 단계입니다.', 'Bodab은 어르신이 큰 글씨와 짧은 단계로', 'FamilyCare에서 동의 범위 안에서 확인할 수 있습니다.', 'UniQLab은 연구자와 기관이 연구 준비']) assert.ok(page.includes(text), text);
   assert.ok(!page.includes('YAKSON'));
   for (const rejected of ['연결되는 네 가지 제품', '가족의 하루를 챙기는 일까지', '고령자와 가족이 복약, 일정, 생활 상태를 함께 챙기는 가족 돌봄 앱']) assert.ok(!page.includes(rejected), rejected);
 });
@@ -346,12 +345,12 @@ test('product pages show only the registered next-version screens: no withdrawn 
   for (const gone of ['assets/verified/uniqlab-screen-20260922.png', 'assets/verified/yakson-designer-exterior-20260922.png', 'assets/verified/yakson-designer-motion-20260922.mp4', 'assets/uniqdata-phone-1.png', 'assets/uniqdata-phone-2.png']) assert.ok(!exists(gone), gone);
 });
 
-test('founder page shows the AI-retouched portrait with its label, the current role and the selected awards', () => {
+test('founder page shows the portrait without a caption, the current role and the selected awards', () => {
   const founder = read('founder/index.html');
   const portrait = block(founder, 'class="founder-portrait"');
   assert.ok(portrait.startsWith('<figure'));
-  assert.match(portrait, /<img src="\/assets\/verified\/founder-portrait-retouched-20260923\.jpg" alt="SportiQue 이승헌 대표 프로필 사진, AI 보정본"/);
-  assert.match(portrait, /<figcaption[^>]*>이승헌 · SportiQue · AI 보정 사진<\/figcaption>/);
+  assert.match(portrait, /<img src="\/assets\/verified\/founder-portrait-retouched-20260923\.jpg" alt="SportiQue 이승헌 대표 프로필 사진"/);
+  assert.doesNotMatch(portrait, /<figcaption/);
   assert.ok(exists('assets/verified/founder-portrait-retouched-20260923.jpg'));
   assert.ok(exists('assets/verified/founder-portrait-20260922.jpg'));
   assert.ok(founder.includes('이승헌 · Founder, CEO &amp; CTO'));
@@ -410,13 +409,14 @@ test('awards swap the Mongolia visit and incorporation cards while preserving th
   assert.doesNotMatch(page, /LATEST FIRST|최신순/);
   assert.ok(rendered.includes('2026.05'));
   assert.ok(!page.includes('2026.05.01'));
-  for (const text of ['준비 시작 2026.04 · 법인 설립 전', '준비 시작 2026.07', '법인 설립 전 SportiQue 팀 활동부터', `공개 기록 ${publicRecords.awards.length}건`]) assert.ok(page.includes(text), text);
+  for (const text of ['법인 설립 전 SportiQue 팀 활동부터', `이력 ${publicRecords.awards.length}건`]) assert.ok(page.includes(text), text);
+  for (const gone of ['준비 시작', '준비가 확인된 이력', '공개 기록']) assert.ok(!page.includes(gone), gone);
   // One list item per record, each in a category that has a filter; the count is announced when the filter changes.
   const categories = [...page.matchAll(/<li class="tl-item" data-category="([^"]+)"/g)].map(match => match[1]);
   assert.equal(categories.length, publicRecords.awards.length);
   for (const category of new Set(categories)) assert.match(page, new RegExp(`<button type="button"[^>]* data-filter="${category}" aria-pressed="false">`), `${category} filter`);
   assert.match(page, /<button type="button"[^>]* data-filter="all" aria-pressed="true">/);
-  assert.match(page, /<p\b[^>]* id="record-count" aria-live="polite">공개 기록 \d+건<\/p>/);
+  assert.match(page, /<p\b[^>]* id="record-count" aria-live="polite">이력 \d+건<\/p>/);
   assert.match(page, /<script type="module" src="\/assets\/page-awards-20261124\.js\?v=[0-9a-f]{12}"><\/script>/);
   // The filter hides records with the hidden attribute, so the list item's own display rule must not override it.
   assert.ok(rules.some(rule => rule.selector === '.tl-item[hidden]' && /display:\s*none/.test(rule.body)));
@@ -447,21 +447,21 @@ test('awards swap the Mongolia visit and incorporation cards while preserving th
 });
 
 test('legal and medical qualifiers stay on the pages they qualify, in Korean and in English', () => {
-  const exampleScreens = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+  const exampleScreens = '준비 중인 다음 버전 화면입니다. 지금 스토어의 앱과 다르며, 화면 속 이름과 수치는 예시입니다.';
   const notDiagnosis = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
   const sharingDesign = ['SportiQue의 공유 아키텍처는 개인의 기록 보관, 동의와 권한, 블록체인 기반 증빙 검증을 분리합니다. 건강기록 원문과 복호화 키를 공개 원장에 올리는 방식이 아닙니다.', '수신자의 권한과 키를 확인하고, 허용된 범위의 암호화 전달을 연결하는 설계입니다.'];
   const studyAccess = 'UniQLab.io에서는 참여자가 동의한 연구 목적과 범위 안에서 기록을 연결합니다. 기관 계정만으로 개인 기록에 접근할 수 있는 것은 아닙니다.';
   const familyAccess = 'Bodab에서 남긴 기록은 어르신이 허용한 범위 안에서 가족과 연결됩니다. 가족 공유와 기관의 돌봄 업무 권한은 구분됩니다.';
   const qualifiers = {
-    '': [exampleScreens, notDiagnosis, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
+    '': [exampleScreens, notDiagnosis, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.', '국가별 법과 정책이 허용하는 범위에서, 허용한 기록만 필요한 곳에 연결합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
     'products/': [exampleScreens, notDiagnosis, ...sharingDesign, studyAccess, familyAccess, '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.'],
     'products/uniqdata/': [exampleScreens, notDiagnosis, ...sharingDesign],
     'products/uniqlab/': [...sharingDesign, studyAccess, '연구팀과 기관을 위한 운영 도구로 개발하고 있습니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.'],
-    'products/bodab/': [...sharingDesign, familyAccess, 'Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다. 기관의 돌봄 요청·담당자 배정 업무는 이 앱의 범위가 아닙니다.'],
+    'products/bodab/': [...sharingDesign, familyAccess, 'Bodab은 어르신이 직접 쓰는 앱으로, 지금은 준비 중이라 스토어에서 내려받을 수 없습니다.'],
     'products/uniqdata/now/': ['모든 숫자는 서버가 센 실제 값이에요. 개인을 알아볼 수 있는 정보는 없어요.'],
-    'about/': ['대학·연구기관·기업이 보유한 자료와 기록 수집 업무를 확인하고, 개인의 동의와 기존 운영 환경에 맞는 적용을 함께 준비합니다. 현장별 범위와 연동 가능성은 협의와 실증으로 확인합니다.', '몽골의 대학·연구 환경을 대상으로 자료 정리와 연구 운영 실증을 준비하는 적용안을 만들고 있습니다. 실제 운영과 확대 범위는 실증에서 확인할 과제입니다.', '연구에서 생긴 개인 기록도 다시 개인에게 돌아오고, 다음 활용은 새로운 동의에서 시작하는 방향을 지향합니다. 국가별 적용은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
-    'vision/': ['연결의 방향을 보여 주는 비전 시각화입니다. 국가별 제공은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
-    'founder/': ['SportiQue 이승헌 대표 프로필 사진, AI 보정본', '이승헌 · SportiQue · AI 보정 사진'],
+    'about/': ['대학·연구기관·기업이 보유한 자료와 기록 수집 업무를 확인하고, 개인의 동의와 기존 운영 환경에 맞는 적용을 함께 준비합니다. 현장별 범위와 연동 가능성은 협의와 실증으로 확인합니다.', '몽골의 대학·연구 환경에서 자료 정리와 연구 운영을 시험할 준비를 하고 있습니다. 실제 운영과 확대 범위는 시험 결과를 보고 정합니다.', '연구에서 생긴 개인 기록도 다시 개인에게 돌아오고, 다음 활용은 새로운 동의에서 시작하는 방향을 지향합니다. 국가별 적용은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
+    'vision/': ['국가별 제공은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.'],
+    'founder/': ['SportiQue 이승헌 대표 프로필 사진'],
     'awards/': [publicRecords.awards.find(record => record.body.includes('본사업 선정과는 별개의 수상')).body],
   };
   for (const { prefix, lang } of languages) for (const [path, sentences] of Object.entries(qualifiers)) {
@@ -469,7 +469,7 @@ test('legal and medical qualifiers stay on the pages they qualify, in Korean and
     for (const sentence of sentences) assert.ok(page.includes(said(sentence, lang)), `${file}: ${sentence}`);
   }
   // Wording the English must keep, whatever else changes in the translation. 'non-diagnostic' is not kept: that sentence left with the old report screen, and one sentence now qualifies the report and the AI answers together.
-  for (const [path, phrases] of Object.entries({ '': ['not real user records', 'does not replace a diagnosis'], 'products/': ['does not replace a diagnosis'], 'products/uniqdata/': ['does not replace a diagnosis'], 'products/uniqlab/': ['decryption keys stay outside the public ledger', 'does not grant access to personal records', 'not automatically shared'], 'about/': ['remain to be tested in the pilot', 'assessed against local policies'], 'vision/': ['assessed against local policies and data storage requirements'], 'founder/': ['AI-retouched photo', 'retouched with AI'] })) {
+  for (const [path, phrases] of Object.entries({ '': ['the names and numbers on screen are examples', 'does not replace a diagnosis'], 'products/': ['does not replace a diagnosis'], 'products/uniqdata/': ['does not replace a diagnosis'], 'products/uniqlab/': ['decryption keys stay outside the public ledger', 'does not grant access to personal records', 'not automatically shared'], 'about/': ['decided from the trial results', 'assessed against local policies'], 'vision/': ['assessed against local policies and data storage requirements'], 'founder/': ['Portrait of SeungHun Lee, founder of SportiQue'] })) {
     const page = read(fileOf('en/', path));
     for (const phrase of phrases) assert.ok(page.includes(phrase), `en/${path}: ${phrase}`);
   }
@@ -503,7 +503,7 @@ const flowSteps = [
   ['연구기관이 UniQLab에서', '참여와 기록 현황을 확인합니다.', '동의 현황, 과제와 알림, 기록이 들어온 현황을 한곳에서 봅니다.'],
   ['개인이 UniQdata에서', '연구가 끝나도 기록을 계속 가집니다.', '같은 기록으로 다음 연구나 다른 활용을 다시 선택합니다.'],
 ];
-const flowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 위 순서는 현재 설계 기준입니다.';
+const flowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 순서는 바뀔 수 있습니다.';
 function assertFlow(html, lang, where) {
   const list = block(html, 'class="flow"');
   assert.ok(list.includes(`aria-label="${said('연구가 진행되는 순서', lang)}"`), where);
@@ -557,5 +557,25 @@ test('no published file still describes servers in Mongolia or the United States
   assert.ok(assets.length > 5 && fragments.length > 0, 'the published text files were found');
   for (const file of [...assets, ...fragments, ...allFiles]) {
     for (const rejected of ['서버 거점', 'US WEST', '글로벌 공통 서버', '현지 데이터 리전']) assert.ok(!read(file).includes(rejected), `${file}: ${rejected}`);
+  }
+});
+
+// Words that describe how the site was made or checked, not what a visitor needs. They stay out of every page, in both
+// languages: the text a reader sees, the text alternatives, the page title and the descriptions search results show.
+test('no page carries process notes or internal wording, and Korean page titles use the navigation words', () => {
+  const banned = ['AI 보정', '보정본', '보정 사진', 'retouched', '내부 단계', '설계 기준', '비전 시각화', '표시해 두었습니다', '준비 시작', '공개 기록', '활동 인증', '데이터 레지던시', 'data residency'];
+  const everythingShown = html => [visibleText(html), ...[...html.matchAll(/\s(?:alt|aria-label|title|content)="([^"]*)"/g)].map(match => match[1])].join('\n');
+  for (const file of allFiles) {
+    const html = read(file), shown = everythingShown(html);
+    for (const phrase of banned) assert.ok(!shown.toLowerCase().includes(phrase.toLowerCase()), `${file}: ${phrase}`);
+    // "상세 보기" stays as link text on the product list; a page title never says it.
+    const titles = [html.match(/<title>([^<]*)<\/title>/)?.[1], html.match(/<meta property="og:title" content="([^"]*)"/)?.[1]].filter(Boolean);
+    for (const title of titles) assert.ok(!title.includes('상세 보기') && !/details?$/i.test(title.trim()), `${file}: ${title}`);
+  }
+  for (const file of koreanFiles) {
+    const html = read(file);
+    for (const title of [html.match(/<title>([^<]*)<\/title>/)?.[1], html.match(/<meta property="og:title" content="([^"]*)"/)?.[1]].filter(Boolean)) {
+      for (const label of [' — Products — ', ' — About — ', ' — Vision — ', ' — Milestones — ', ' — Contact — ', ' — Founder — ', ' — Institutions — ']) assert.ok(!title.includes(label), `${file}: ${title}`);
+    }
   }
 });
