@@ -158,8 +158,8 @@ test('the status helper knows four words and only "서비스 중" is live', asyn
 
 test('the home network section states the hourly evidence record once, as a live fact under a planned heading', () => {
   const sentences = {
-    ko: '동의와 이용 이력의 증빙은 한 시간마다 XRPL 메인넷에 기록합니다. 건강기록 원문은 올리지 않습니다.',
-    en: 'Evidence of consent and use history is recorded on the XRPL mainnet every hour. Original health records are not uploaded.',
+    ko: '동의와 이용 이력의 증빙은 한 시간 단위로 묶어, 그 요약값만 XRPL 메인넷에 기록합니다. 건강기록 원문과 개인별 기록은 올리지 않습니다.',
+    en: 'Evidence of consent and use history is grouped into hourly batches, and only a digest of each batch is recorded on the XRPL mainnet. Original health records and per-person records are not uploaded.',
   };
   for (const { prefix, lang } of languages) {
     const home = read(fileOf(prefix, ''));
