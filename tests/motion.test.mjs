@@ -138,27 +138,24 @@ test('backdrop: the motion switch (html[data-motion=off]) is followed both ways'
   assert.equal(env.paints, moving + 1);
 });
 
-test('backdrop: single dots switch on while it moves, and a still picture has none', async () => {
-  // The colours sparks and links are painted in; the slow lights only ever give blends of other colours.
-  const colours = [[237, 243, 255], [89, 223, 241], [164, 135, 255]];
-  const lit = ({ data }) => { let n = 0; for (let i = 0; i < data.length; i += 4) if (data[i + 3] > 60 && colours.some(([r, g, b]) => data[i] === r && data[i + 1] === g && data[i + 2] === b)) n++; return n; };
-  const moving = browser();
+test('backdrop: the picture keeps changing while it moves, and no single dot stands out from its neighbours', async () => {
+  const env = browser();
   (await stage())();
-  assert.equal(lit(moving.picture), 0, 'the first picture, before anything has moved');
-  moving.run(4);
-  assert.ok(lit(moving.picture) > 0, 'dots are lit after four seconds');
-  // Stopping the motion while dots are lit leaves a still picture without them, and so does starting still.
-  moving.setMotion('off');
-  assert.equal(lit(moving.picture), 0, 'none left after the switch');
-  moving.setMotion();
-  moving.run(4);
-  assert.ok(lit(moving.picture) > 0, 'and they come back with the motion');
-  for (const options of [{ reduced: true }, { motion: 'off' }]) {
-    const still = browser(options);
-    (await stage())();
-    still.run(4);
-    assert.equal(lit(still.picture), 0, JSON.stringify(options));
+  env.run(2);
+  const first = Uint8ClampedArray.from(env.picture.data);
+  env.run(3);
+  const { data } = env.picture, cells = data.length / 4, cols = env.canvas.width;
+  let changed = 0;
+  for (let i = 3; i < data.length; i += 4) if (Math.abs(data[i] - first[i]) > 4) changed++;
+  assert.ok(changed / cells > 0.05, `${changed} of ${cells} cells changed in three seconds`);
+  // Everything that moves is large and soft. A dot far brighter than the dots beside it reads as a stray mark next to text.
+  let lone = 0;
+  for (let c = 1; c < cells - 1; c++) {
+    if (c % cols === 0 || c % cols === cols - 1) continue;
+    const a = data[c * 4 + 3], beside = Math.max(data[c * 4 - 1], data[c * 4 + 7]);
+    if (a > 2.2 * beside + 24) lone++;
   }
+  assert.equal(lone, 0, 'no lone bright dots');
 });
 
 test('backdrop: nothing is drawn in forced colours', async () => {
