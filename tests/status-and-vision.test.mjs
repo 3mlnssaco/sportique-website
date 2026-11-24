@@ -178,3 +178,19 @@ test('the home network section states the hourly evidence record once, as a live
     assert.ok(!/XRP(?!L)/.test(plain), `${prefix} bare XRP`);
   }
 });
+
+test('the 2025 demo is told without a reward claim, and no paragraph that names the ledger mentions rewards or coins', () => {
+  const demo = {
+    '': { ko: '2025년 XRPL 데모에서 사용자는 공유할 기록과 열람 기간을 선택하고, 허용된 접근·활용 이력을 확인했습니다.', en: 'In our 2025 XRPL demo, users selected which records to share and how long others could view them, and reviewed authorized access and use history.' },
+    'about/': { ko: '2025년 XRPL 데모에서는 사용자가 공유 범위와 열람 기간을 직접 정하고, 접근·활용 이력을 확인하는 흐름을 구현했습니다. 건강기록 원문은 개인 DB에 두었습니다.', en: 'Our 2025 XRPL demo let users choose sharing scope and access duration and review access and use history. Original health records remained in the personal database.' },
+  };
+  for (const { prefix, lang } of languages) {
+    for (const [page, sentence] of Object.entries(demo)) {
+      const html = read(fileOf(prefix, page));
+      assert.ok(visibleText(html).includes(visibleText(sentence[lang])), `${prefix}${page} demo sentence`);
+      const named = [...html.matchAll(/<p[^>]*>([^<]*XRPL[^<]*)<\/p>/g)].map(match => match[1]);
+      assert.ok(named.length > 0, `${prefix}${page} has a paragraph naming the ledger`);
+      for (const paragraph of named) assert.doesNotMatch(paragraph, /보상|코인|토큰|지갑|reward|compensation|payout|coin|token|wallet|XRP(?!L)/i, `${prefix}${page}`);
+    }
+  }
+});
