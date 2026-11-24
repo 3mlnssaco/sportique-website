@@ -43,7 +43,7 @@ test('About explains the public company scope without IR commercial or competito
     assert.equal(count(block(page, 'id="work"'), /<article\b/g), 4, prefix);
     assert.equal(count(block(page, 'id="principles"'), /<article\b/g), 3, prefix);
   }
-  assert.ok(about.includes('remain to be tested in the pilot'));
+  assert.ok(about.includes('decided from the trial results'));
   assert.doesNotMatch(about, /Evidation|PicnicHealth|Citizen Health|Patientory|revenue model|unit economics|gross margin|subscription pricing|fundraising target|\bKRW\b|\bUSD\b/i);
 });
 

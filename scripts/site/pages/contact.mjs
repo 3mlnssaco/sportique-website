@@ -35,7 +35,7 @@ const orgWay = { title: '기관에 도입하고 싶어요.', body: '기관 정�
 
 export default {
   path: '/contact/',
-  title: 'Contact — 다음 이야기는, 함께',
+  title: '문의 — 다음 이야기는, 함께',
   description: 'SportiQue 제품, 돌봄 현장, 기관·연구 협업 문의.',
   body() {
     const hero = heroTwoLine({

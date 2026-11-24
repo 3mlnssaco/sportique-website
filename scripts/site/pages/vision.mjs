@@ -10,7 +10,7 @@ const hero = pageHero({
   id: 'vision-title',
 });
 
-const world = `<section class="vision-world"><div class="vision-world-map">${worldLights()}</div><div class="wrap"><p class="note vision-map-note">연결의 방향을 보여 주는 비전 시각화입니다. 국가별 제공은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.</p></div></section>`;
+const world = `<section class="vision-world"><div class="vision-world-map">${worldLights()}</div><div class="wrap"><p class="note vision-map-note">국가별 제공은 현지 정책과 데이터 보관 조건에 맞춰 검증합니다.</p></div></section>`;
 
 const principles = section({
   id: 'principles',
@@ -38,7 +38,7 @@ const start = section({
 
 export default {
   path: '/vision/',
-  title: 'Vision — 개인의 기록으로 세계를 잇습니다',
+  title: '비전 — 개인의 기록으로 세계를 잇습니다',
   description: 'SportiQue가 지향하는 개인 중심 건강데이터 네트워크. 국가가 달라도 기록은 이어지고, 활용과 공유는 개인이 선택합니다.',
   body() {
     return [hero, world, principles, start, cta()].join('\n');

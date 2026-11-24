@@ -34,7 +34,7 @@ const work = section({
     { title: '개인 건강기록 관리', body: 'UniQdata.io는 지난 진료·검진 자료와 오늘의 생활 기록을 함께 관리하는 출발점입니다. DataQ는 그 안에서 원본과 출처를 보존하며 형식·항목·단위를 정리합니다.', html: link({ href: '/products/uniqdata/', label: 'UniQdata.io의 가치 보기 ↗', mark: '' }) },
     { title: '동의한 기록과 연구의 연결', body: 'UniQLab.io는 연구 준비, 참여자 동의, 반복 기록 수집과 자료 확인을 지원합니다. 개인은 UniQdata.io에서 참여 여부와 공유 범위를 선택하고, 연구팀은 그 범위 안에서 연구를 운영합니다.', html: link({ href: '/products/uniqlab/', label: 'UniQLab.io의 가치 보기 ↗', mark: '' }) },
     { title: '일상의 돌봄과 복약', body: 'Bodab은 어르신의 복약·일정·체크인과 허용된 가족 공유를 연결합니다.', html: link({ href: '/products/bodab/', label: 'Bodab의 가치 보기 ↗', mark: '' }) },
-    { title: '현장에 맞는 기록 활용', body: ['대학·연구기관·기업이 보유한 자료와 기록 수집 업무를 확인하고, 개인의 동의와 기존 운영 환경에 맞는 적용을 함께 준비합니다. 현장별 범위와 연동 가능성은 협의와 실증으로 확인합니다.', '몽골의 대학·연구 환경을 대상으로 자료 정리와 연구 운영 실증을 준비하는 적용안을 만들고 있습니다. 실제 운영과 확대 범위는 실증에서 확인할 과제입니다.'], html: link({ href: '/contact/', label: '적용 가능성 논의하기 ↗', mark: '' }) },
+    { title: '현장에 맞는 기록 활용', body: ['대학·연구기관·기업이 보유한 자료와 기록 수집 업무를 확인하고, 개인의 동의와 기존 운영 환경에 맞는 적용을 함께 준비합니다. 현장별 범위와 연동 가능성은 협의와 실증으로 확인합니다.', '몽골의 대학·연구 환경에서 자료 정리와 연구 운영을 시험할 준비를 하고 있습니다. 실제 운영과 확대 범위는 시험 결과를 보고 정합니다.'], html: link({ href: '/contact/', label: '적용 가능성 논의하기 ↗', mark: '' }) },
   ]),
 });
 
@@ -79,16 +79,16 @@ const team = section({
 const company = section({
   id: 'company',
   body: facts([
-    { name: 'COMPANY', value: 'SportiQue · 스포티큐' },
-    { name: 'FOUNDER', value: 'SeungHun Lee' },
-    { name: 'STARTING POINT', value: 'UniQdata' },
-    { name: 'OUR FOCUS', value: 'Personal health data' },
+    { name: '회사', value: 'SportiQue · 스포티큐' },
+    { name: '대표', value: '이승헌' },
+    { name: '출발점', value: 'UniQdata' },
+    { name: '분야', value: '개인 건강데이터' },
   ]),
 });
 
 export default {
   path: '/about/',
-  title: 'About — 개인에게 돌아오는 주도권',
+  title: '회사 — 개인에게 돌아오는 주도권',
   description: 'Bodab 돌봄 경험에서 발견한 건강기록의 단절과 개인의 기록 관리·공유 문제.',
   body() {
     return [hero, manifesto, work, direction, principles, history, team, company, cta()].join('\n');

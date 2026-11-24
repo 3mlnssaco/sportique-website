@@ -12,7 +12,7 @@ const profileLinks = `<div class="profile-links" role="group" aria-label="외부
 
 const honors = `<div class="honors">${tag('주요 수상')}<ul>${awardsRecords.filter(r => r.founderHighlight).map(r => `<li><span class="honor-date">${esc(r.date)}</span><strong>${esc(r.title)}</strong><span class="honor-note">${esc(r.founderHighlight)}</span></li>`).join('')}</ul>${link({ href: '/awards/', label: '전체 수상·선정 이력', mark: '→' })}</div>`;
 
-const hero = `<section class="page-hero founder-hero" aria-labelledby="page-title"><div class="wrap founder-hero-inner"><div class="founder-intro">${tag('대표')}<h1 id="page-title">${lines('SeungHun', 'Lee.')}</h1><p class="lead">이승헌 · Founder, CEO &amp; CTO</p><p class="founder-signature">BUILD. CONNECT. CARE.</p>${honors}</div><figure class="founder-portrait">${tile({ body: '<img src="/assets/verified/founder-portrait-retouched-20260923.jpg" alt="SportiQue 이승헌 대표 프로필 사진, AI 보정본" width="1024" height="1536" fetchpriority="high">' })}<figcaption class="note">이승헌 · SportiQue · AI 보정 사진</figcaption></figure></div></section>`;
+const hero = `<section class="page-hero founder-hero" aria-labelledby="page-title"><div class="wrap founder-hero-inner"><div class="founder-intro">${tag('대표')}<h1 id="page-title">${lines('SeungHun', 'Lee.')}</h1><p class="lead">이승헌 · Founder, CEO &amp; CTO</p><p class="founder-signature">BUILD. CONNECT. CARE.</p>${honors}</div><figure class="founder-portrait">${tile({ body: '<img src="/assets/verified/founder-portrait-retouched-20260923.jpg" alt="SportiQue 이승헌 대표 프로필 사진" width="1024" height="1536" fetchpriority="high">' })}</figure></div></section>`;
 
 const work = section({
   id: 'founder-work', label: 'work-title',
@@ -30,7 +30,7 @@ const experience = section({
 
 export default {
   path: '/founder/',
-  title: 'Founder — SeungHun Lee',
-  description: 'SportiQue 이승헌 대표의 제품·기술 방향과 공개 교육·연구·프로그램 이력.',
+  title: '대표 — 이승헌',
+  description: 'SportiQue 이승헌 대표의 제품·기술 방향과 교육·연구·프로그램 이력.',
   body: () => hero + work + experience + cta(),
 };

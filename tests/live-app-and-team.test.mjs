@@ -7,7 +7,7 @@ const appStore = 'https://apps.apple.com/kr/app/uniqdata/id6760312240';
 const playStore = 'https://play.google.com/store/apps/details?id=io.uniqdata.app';
 const shots = ['connect', 'routine', 'report', 'vault'].map(id => `/assets/verified/uniqdata-next-${id}-20261124.png`);
 const oldShots = ['home', 'ai-chat', 'report', 'routine', 'checkin'].map(id => `/assets/verified/uniqdata-appstore-${id}-20260926.webp`);
-const exampleNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+const exampleNotice = '준비 중인 다음 버전 화면입니다. 지금 스토어의 앱과 다르며, 화면 속 이름과 수치는 예시입니다.';
 const notDiagnosis = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
 const lead = 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.';
 const profiles = ['https://www.linkedin.com/in/seunghun-daniel-lee/', 'https://github.com/3mlnssaco'];
@@ -37,7 +37,7 @@ test('home, products and UniQdata detail show the four next-version screens labe
     assert.ok(!page.includes('지금 스토어에서') && !page.includes('Available now'), `${file}: the old heading is gone`);
     assert.ok(!page.includes('스토어에 공개된 실제 앱 화면') && !page.includes('actual app screens'), `${file}: not presented as the store's screens`);
     assert.ok(app.includes(said(exampleNotice, lang)), `${file}: example-screen notice`);
-    if (lang === 'en') assert.ok(app.includes('This is the design of the next version, which is in preparation, and its screens differ from the app now in the store. Names and values shown are examples, not real user records.'), `${file}: English notice word for word`);
+    if (lang === 'en') assert.ok(app.includes('These are screens of the next version, still in preparation. They differ from the app in the stores today, and the names and numbers on screen are examples.'), `${file}: English notice word for word`);
     assert.ok(app.indexOf(said(exampleNotice, lang)) > app.indexOf(shots.at(-1)), `${file}: the notice follows the screens`);
     assert.ok(app.includes(said(notDiagnosis, lang)), `${file}: the report is not a diagnosis`);
     assert.ok(app.indexOf(said(notDiagnosis, lang)) > app.indexOf(shots.at(-1)), `${file}: the diagnosis notice follows the screens`);

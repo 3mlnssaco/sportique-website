@@ -68,7 +68,7 @@ test('English contact retains Gmail, mail app, copy-address and onboarding actio
   assert.match(main, /<script type="module" src="\/assets\/page-contact-20261124\.js\?v=[0-9a-f]{12}"><\/script>/);
   assert.ok(read('assets/page-contact-20261124.js').includes('Email address copied.'));
   assert.match(read('en/awards/index.html'), /<script type="module" src="\/assets\/page-awards-20261124\.js\?v=[0-9a-f]{12}"><\/script>/);
-  assert.ok(read('assets/page-awards-20261124.js').includes('${count} public record${count === 1 ? \'\' : \'s\'}'));
+  assert.ok(read('assets/page-awards-20261124.js').includes('${count} ${count === 1 ? \'entry\' : \'entries\'}'));
 });
 
 test('institution guide explains both login roles without a UniQLab-only entry', () => {

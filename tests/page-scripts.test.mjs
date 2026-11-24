@@ -27,7 +27,7 @@ test('awards filter shows one category at a time and announces the count in the 
       querySelector: selector => (selector === '#record-count' ? counter : assert.fail(`the stand-in has no ${selector}`)),
     });
     await run('assets/page-awards-20261124.js');
-    const says = total => (lang === 'en' ? `${total} public record${total === 1 ? '' : 's'}` : `공개 기록 ${total}건`);
+    const says = total => (lang === 'en' ? `${total} ${total === 1 ? 'entry' : 'entries'}` : `이력 ${total}건`);
     const all = says(items.length);
     assert.equal(counter.textContent, all, `${file}: the count as built reads as the script writes it`);
 

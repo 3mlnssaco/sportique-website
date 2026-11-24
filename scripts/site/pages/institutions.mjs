@@ -9,7 +9,7 @@ const way = ({ title, body, action, note }) => tile({ element: 'article', classN
 
 export default {
   path: '/institutions/',
-  title: 'Institutions — 기관 포털',
+  title: '기관 포털',
   description: '기관 관리자·직원 및 서비스 실무자의 로그인과 신규 기관 도입을 안내합니다.',
   body() {
     const hero = heroTwoLine({
