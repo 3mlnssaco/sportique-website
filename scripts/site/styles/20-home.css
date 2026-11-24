@@ -43,24 +43,11 @@
   .pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Products: one large UniQdata tile, then two small ones. */
-.product-tile { --pad: clamp(24px, 5vw, 64px); display: grid; margin-top: 24px; }
-.product-copy { display: grid; gap: 22px; justify-items: start; padding: var(--pad) var(--pad) 0; }
-.product-copy h2 { font-size: clamp(28px, 3.3vw, 44px); }
-.product-copy p { max-width: 520px; }
-/* Two phones side by side, cut a little by the tile's bottom edge. */
-.product-shots {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px);
-  width: min(440px, 100%); margin: 0 auto calc(-1 * clamp(36px, 5vw, 64px)); padding: 40px var(--pad) 0;
-}
-/* The label sits above the phones, because the tile's bottom edge cuts them. */
-.product-shots-note { grid-column: 1 / -1; margin-bottom: -4px; text-align: center; text-wrap: balance; }
+/* Products: three equal link tiles. */
+.trio { display: grid; gap: 16px; margin-top: clamp(32px, 4vw, 56px); }
 @media (min-width: 901px) {
-  .product-tile { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: end; }
-  .product-copy { align-self: center; padding: var(--pad) clamp(24px, 3vw, 40px) var(--pad) var(--pad); }
-  .product-shots { width: 100%; padding: clamp(32px, 4vw, 56px) var(--pad) 0 0; }
+  .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 }
-.subhead { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin: clamp(56px, 7vw, 96px) 0 24px; }
 .duo { display: grid; gap: 16px; }
 @media (min-width: 701px) {
   .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }

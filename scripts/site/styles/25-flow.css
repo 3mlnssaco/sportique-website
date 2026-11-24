@@ -1,0 +1,55 @@
+/* 25-flow: the order in which a study runs (researchFlow() in scripts/site/ui.mjs). Home, product list, UniQLab page.
+   Narrow screens: one column, rail on the left, every card on the right.
+   Wide screens: three columns. Institution steps sit left, personal steps right, steps between the two products in the middle. */
+.flow-title { margin-top: clamp(48px, 6vw, 80px); margin-bottom: 28px; }
+.flow-lanes { display: none; }
+.flow { position: relative; display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+/* The rail is drawn step by step: each step runs it down to the next, the first starts at its number, the last ends at its number. */
+.flow-step::before { content: ""; position: absolute; top: 0; bottom: -14px; left: 16px; width: 1px; background: var(--line-2); }
+.flow-step:first-child::before { top: 32px; }
+.flow-step:last-child::before { bottom: auto; height: 32px; }
+.flow-step { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 16px; align-items: start; }
+.flow-n {
+  grid-column: 1; grid-row: 1; z-index: 1; display: grid; place-items: center; width: 32px; height: 32px; margin-top: 16px;
+  border: 1px solid var(--line-2); border-radius: 50%; background: var(--bg);
+  color: var(--ink); font-size: 13px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums;
+}
+.flow-card {
+  grid-column: 2; grid-row: 1; position: relative; z-index: 1; min-width: 0; padding: 20px 22px;
+  border: 1px solid var(--line); border-radius: 20px;
+  background: linear-gradient(180deg, rgba(237, 243, 255, .04), rgba(237, 243, 255, .012));
+}
+.flow-who { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.flow-card h3 { margin: 6px 0 0; color: var(--ink); font-size: 18px; line-height: 1.4; }
+.flow-card h3 + p { margin: 8px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.65; }
+.flow + .note { margin-top: 28px; }
+.flow ~ .actions, .note + .actions { margin-top: 24px; }
+
+@media (min-width: 901px) {
+  .flow-lanes {
+    display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); margin-bottom: 20px;
+  }
+  .flow-lane { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 12px; }
+  .flow-lane:first-child { grid-column: 1; }
+  .flow-lane:last-child { grid-column: 3; }
+  .flow-lane strong { color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
+  .flow-lane small { color: var(--muted); font-size: 13px; }
+  .flow-lane .tag { margin: 0; }
+  .flow { gap: 16px; }
+  .flow-step::before { left: 50%; bottom: -16px; }
+  .flow-step { grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); column-gap: 0; }
+  .flow-n { grid-column: 2; justify-self: center; }
+  .flow-step--lab .flow-card { grid-column: 1; padding-right: 22px; margin-right: 8px; }
+  .flow-step--person .flow-card { grid-column: 3; margin-left: 8px; }
+  /* Between the two products: under the number, centred on the rail, opaque so the rail does not show through. */
+  .flow-step--core .flow-card {
+    grid-column: 1 / -1; grid-row: 2; width: min(460px, 100%); margin-top: 12px; justify-self: center; text-align: center;
+    background: linear-gradient(180deg, rgba(237, 243, 255, .04), rgba(237, 243, 255, .012)), var(--bg);
+  }
+  .flow-step--core .flow-n { margin-top: 0; }
+}
+
+/* Forced colours drop backgrounds, so the rail is drawn as a border there. */
+@media (forced-colors: active) {
+  .flow-step::before { background: none; border-left: 1px solid CanvasText; }
+}

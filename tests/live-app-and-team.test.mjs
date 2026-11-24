@@ -9,7 +9,6 @@ const shots = ['connect', 'routine', 'report', 'vault'].map(id => `/assets/verif
 const oldShots = ['home', 'ai-chat', 'report', 'routine', 'checkin'].map(id => `/assets/verified/uniqdata-appstore-${id}-20260926.webp`);
 const exampleNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
 const notDiagnosis = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
-const shortNotice = '준비 중인 다음 버전의 화면입니다. 화면 속 이름과 수치는 예시입니다.';
 const lead = 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.';
 const profiles = ['https://www.linkedin.com/in/seunghun-daniel-lee/', 'https://github.com/3mlnssaco'];
 
@@ -46,7 +45,7 @@ test('home, products and UniQdata detail show the four next-version screens labe
   }
   for (const { prefix, lang } of languages) {
     const home = read(fileOf(prefix, ''));
-    assert.ok(block(home, 'id="products"').includes(said(shortNotice, lang)), `${prefix}home: the product tile says its phones are next-version examples`);
+    assert.equal(count(block(home, 'id="products"'), /<img\b/g), 0, `${prefix}home: the product section shows no screens, so it needs no screen notice`);
     for (const url of [appStore, playStore]) assert.ok(block(home, 'id="uniqdata-app"').includes(`href="${url}"`), `${prefix}home ${url}`);
     assert.ok(home.indexOf('id="uniqdata-app"') < home.indexOf('id="problem"'), `${prefix}home: the live app comes before the problem`);
   }

@@ -64,7 +64,6 @@ export const appShots = [
 ];
 export const appShotNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
 export const notDiagnosisNotice = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
-export const appShotShortNotice = '준비 중인 다음 버전의 화면입니다. 화면 속 이름과 수치는 예시입니다.';
 
 // Phone frame drawn in css (.phone): the exported screens have no device bezel. Tall screens show their top part only.
 export function phone(id) {
@@ -150,4 +149,22 @@ export function pills(buttons, { label = '' } = {}) {
 // split(`<h2>...</h2><p>...</p>`, rows([...]))
 export function split(left, right) {
   return `<div class="split split--top"><div class="split-main">${left}</div><div class="split-side">${right}</div></div>`;
+}
+
+// The order in which a study runs, as six steps. `kind` says which product the step happens in: lab (UniQLab),
+// person (UniQdata) or core (between the two); the lanes are told by position and words, not by colour.
+// Used on the home page, the product list and the UniQLab page. Show researchFlowNote under it.
+export const researchFlowNote = 'UniQLab과 앱의 연구 참여 기능은 개발 중이며, 위 순서는 현재 설계 기준입니다.';
+const flowSteps = [
+  ['lab', '연구기관이 UniQLab에서', '연구를 제안합니다.', '연구 목적, 요청 항목, 기간, 대상자 조건을 정해 제출합니다.'],
+  ['core', 'SportiQue가', '제안을 검토합니다.', '검토를 마친 연구만 참여자에게 열립니다.'],
+  ['person', '개인이 UniQdata에서', '요청을 보고 동의합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 연구마다 따로 동의하고, 철회하면 새로운 사용은 바로 멈춥니다.'],
+  ['core', '두 제품 사이에서', '동의한 범위의 기록만 연결됩니다.', '기관 계정만으로는 개인 기록에 접근할 수 없습니다.'],
+  ['lab', '연구기관이 UniQLab에서', '참여와 기록 현황을 확인합니다.', '동의 현황, 과제와 알림, 기록이 들어온 현황을 한곳에서 봅니다.'],
+  ['person', '개인이 UniQdata에서', '연구가 끝나도 기록을 계속 가집니다.', '같은 기록으로 다음 연구나 다른 활용을 다시 선택합니다.'],
+];
+export function researchFlow() {
+  const lanes = `<div class="flow-lanes" aria-hidden="true"><div class="flow-lane"><strong>UniQLab</strong><small>연구기관</small>${tag('개발 중')}</div><div class="flow-lane"><strong>UniQdata</strong><small>개인</small>${tag('서비스 중', { live: true })}</div></div>`;
+  const step = ([kind, who, title, body], index) => `<li class="flow-step flow-step--${kind}"><span class="flow-n" aria-hidden="true">${index + 1}</span><div class="flow-card"><p class="flow-who">${esc(who)}</p><h3>${esc(title)}</h3><p>${esc(body)}</p></div></li>`;
+  return `${lanes}<ol class="flow" aria-label="연구가 진행되는 순서">${flowSteps.map(step).join('')}</ol>`;
 }

@@ -1,7 +1,8 @@
 // Home page (2026-11-24 design). Every Korean sentence is the original text node from
 // scripts/home-content.html and liveApp() in scripts/build-site.mjs, unchanged, so the existing
 // English keys keep matching. New words are listed in scripts/english-copy.d/home.json.
-import { esc, lines, button, link, tag, head, tile, storeButtons, phone, appTile, appShotShortNotice, rows } from '../ui.mjs';
+import { esc, lines, button, link, tag, head, storeButtons, appTile, rows, researchFlow, researchFlowNote } from '../ui.mjs';
+import { data } from '../data.mjs';
 
 const worldPlaceholder = '<figure class="world-lights" data-world-lights></figure>';
 
@@ -17,11 +18,13 @@ async function worldLights() {
 }
 
 // `product-hero` is the hook assets/stage-field-20261124.js uses to place the first-screen lights.
-const hero = world => `<section class="hero product-hero" aria-labelledby="hero-title"><div class="wrap hero-inner">${tag('개인을 위한 건강데이터 네트워크', { live: true })}<h1 id="hero-title">${lines('건강기록은 한곳에.', '선택은 개인에게.')}</h1><p class="lead">SportiQue는 흩어진 건강기록을 개인이 모아 관리하고, 쓰거나 나눌 때 대상과 범위를 직접 정하는 기반을 만듭니다. 그 시작이 UniQdata입니다.</p><div class="actions">${button({ href: 'https://uniqdata.io/', label: 'UniQdata 알아보기', arrow: '↗' })}${link({ href: '#problem', label: '왜 필요한가요?', mark: '↓' })}</div></div><div class="hero-world">${world}</div></section>`;
+const hero = world => `<section class="hero product-hero" aria-labelledby="hero-title"><div class="wrap hero-inner">${tag('개인을 위한 건강데이터 네트워크', { live: true })}<h1 id="hero-title">${lines('건강기록은 한곳에.', '선택은 개인에게.')}</h1><p class="lead">SportiQue는 흩어진 건강기록을 개인이 모아 관리하고, 쓰거나 나눌 때 대상과 범위를 직접 정하는 기반을 만듭니다. 그 시작이 UniQdata입니다.</p><div class="actions">${button({ href: 'https://uniqdata.io/', label: 'UniQdata 알아보기', arrow: '↗' })}${button({ href: '#research', label: 'UniQLab 흐름 보기', variant: 'ghost', arrow: '↓' })}</div></div><div class="hero-world">${world}</div></section>`;
 
 const world = `<section class="section" id="world" aria-labelledby="world-title"><div class="wrap split"><div class="split-main">${tag('네트워크')}<h2 id="world-title">${lines('국가가 달라도,', '개인의 기록을 이어 씁니다.')}</h2><p>해외에서 진료를 받거나 가족과 떨어져 지낼 때도, 필요한 기록을 이어서 활용할 수 있어야 합니다. 공유할 기록과 대상은 개인이 정합니다.</p>${link({ href: '/vision/', label: '회사 비전 보기' })}</div><ul class="rules"><li>공유할 사람과 항목을 개인이 선택.</li><li>나라가 달라도 이어지도록.</li><li>AI·앱마다 허용할 범위를 따로 선택.</li></ul></div></section>`;
 
 const app = `<section class="section" id="uniqdata-app" aria-labelledby="live-app-title"><div class="wrap">${head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('스토어의 UniQdata,', '다음 버전을 준비합니다.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.', extra: storeButtons })}${appTile()}</div></section>`;
+
+const research = `<section class="section" id="research" aria-labelledby="research-title"><div class="wrap">${head({ tag: 'UniQLab', id: 'research-title', title: lines('연구기관은 UniQLab에서,', '개인은 UniQdata에서.'), lead: '연구기관이 연구를 제안하면, 개인이 요청을 보고 직접 동의합니다. 동의한 범위의 기록만 연구에 연결됩니다.' })}${researchFlow()}<p class="note">${esc(researchFlowNote)}</p><div class="actions">${button({ href: '/contact/', label: '기관 도입 문의' })}${link({ href: '/products/uniqlab/', label: 'UniQLab 자세히' })}</div></div></section>`;
 
 const problems = [
   ['기록이 제각각 흩어집니다.', '진료·검진·복약·기기 기록은 기관과 서비스마다 다른 형식과 계정 안에 남습니다.'],
@@ -49,12 +52,14 @@ const uses = [
 ];
 const value = `<section class="section" id="value" aria-labelledby="value-title"><div class="wrap">${head({ tag: '쓰임', id: 'value-title', title: lines('모인 기록은,', '선택지가 됩니다.'), lead: '개인은 기록을 리포트로 확인하고 AI에 질문하며, 보호자에게 필요한 항목을 공유합니다. 연구와 목적별 앱에는 개인이 동의한 범위만 연결합니다.' })}<ul class="pairs" aria-label="개인 기록의 활용 경로">${uses.map(([title, body]) => `<li><h3>${esc(title)}</h3><p>${esc(body)}</p></li>`).join('')}</ul><p class="note">모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.</p></div></section>`;
 
-const routes = [
-  ['/products/#uniqlab', 'UniQLab', '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 연구 워크스페이스.'],
-  ['/products/#bodab', 'Bodab', '복약, 일정, 생활 상태를 가족과 함께 챙기는 돌봄 경험.'],
-];
-const uniqdataTile = tile({ className: 'product-tile', body: `<div class="product-copy"><h2 id="products-title">${lines('개인 건강기록의', '현재 시작점, UniQdata.')}</h2><p>여러 출처의 건강기록을 개인 DB에서 관리하며 활용과 공유 범위를 정하는 접점입니다. DataQ는 원본과 출처를 보존하면서 형식·항목·단위를 표준화하는 내부 처리 단계입니다.</p>${button({ href: 'https://uniqdata.io/', label: 'UniQdata 보기', variant: 'ghost', arrow: '↗' })}</div><div class="product-shots"><p class="note product-shots-note">${appShotShortNotice}</p>${phone('connect')}${phone('report')}</div>` });
-const products = `<section class="section" id="products" aria-labelledby="products-title"><div class="wrap">${tag('제품')}${uniqdataTile}<div class="subhead"><h2 class="h2-sm" id="routes-title">${lines('하나의 기록,', '활용은 자유롭게.')}</h2>${link({ href: '/products/', label: '모든 제품 보기' })}</div><div class="duo">${routes.map(([href, name, body]) => `<a class="tile tile--link" href="${href}"><h3>${name}</h3><p>${esc(body)}</p><span class="tile-mark" aria-hidden="true">↗</span></a>`).join('')}</div></div></section>`;
+// The three products as equal link tiles: each says what the product is in the sentence the product list uses.
+const productBlurbs = {
+  uniqdata: null,
+  uniqlab: '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 연구 워크스페이스.',
+  bodab: '복약, 일정, 생활 상태를 가족과 함께 챙기는 돌봄 경험.',
+};
+const productTiles = data.products.map(p => `<a class="tile tile--link" href="/products/${p.id}/"><h3>${esc(p.name)}</h3><p>${esc(productBlurbs[p.id] ?? p.description)}</p><span class="tile-mark" aria-hidden="true">↗</span></a>`).join('');
+const products = `<section class="section" id="products" aria-labelledby="products-title"><div class="wrap">${head({ tag: '제품', id: 'products-title', title: lines('하나의 기록,', '활용은 자유롭게.'), extra: link({ href: '/products/', label: '모든 제품 보기' }) })}<div class="trio">${productTiles}</div></div></section>`;
 
 const story = `<section class="section" id="story" aria-labelledby="care-title"><div class="wrap story"><div class="story-main">${tag('이야기')}<h2 id="care-title">${lines('돌봄에서,', '더 큰 문제를 찾았습니다.')}</h2><p class="lead">가족이 어르신의 복약·활동·진료를 함께 챙기려 해도, 필요한 기록은 병원·약국·앱에 흩어져 있었습니다.</p><p>가족은 복약 확인 상태와 진료 전에 필요한 정보를 보려면 여러 곳의 기록을 대조하고 서로 다시 물어야 했습니다. 어떤 기록을 누구와 나눌지도 개인이 쉽게 정할 수 없었습니다.</p><p>SportiQue는 Bodab 한 앱에 그치지 않고, 개인이 기록을 한곳에 모아 관리하며 활용·공유 범위를 직접 정하는 기반을 만들기로 했습니다.</p></div><div class="story-side"><h3 id="journey-title">${lines('기록의 공유를', '개인이 정하도록.')}</h3><p class="year">2025</p><p>2025년 XRPL 데모에서 사용자는 공유할 기록과 열람 기간을 선택했습니다. 허용된 접근·활용 이력을 확인하고 연구 참여 보상을 자동으로 받는 흐름도 구현했습니다.</p><p>건강기록 원문은 개인 DB에 두고 권한과 이용 이력만 연결했습니다. 이 경험을 UniQdata의 기록 관리와 공유 선택으로 이어가고 있습니다.</p>${link({ href: '/awards/', label: '수상·선정·발표 기록 보기' })}</div></div></section>`;
 
@@ -65,6 +70,6 @@ export default {
   title: '건강기록은 한곳에, 선택은 개인에게',
   description: 'SportiQue는 흩어진 건강기록을 개인이 모아 관리하고, 쓰거나 나눌 때 대상과 범위를 직접 정하는 기반을 만듭니다.',
   async body() {
-    return [hero(await worldLights()), world, app, problem, system, value, products, story, closing].join('\n');
+    return [hero(await worldLights()), world, app, research, problem, system, value, products, story, closing].join('\n');
   },
 };
