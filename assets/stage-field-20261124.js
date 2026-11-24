@@ -85,7 +85,8 @@ export function mountStage() {
   let sparks = [], links = [], keepClear = [];
   const chance = seededRandom(20261125);
   // The world map says which places are lit; a spark over it would read as one more lit place.
-  const clearOf = [...document.querySelectorAll('[data-world-lights]')];
+  // Next to a large heading a lit dot reads as a stray full stop, so heading lines stay clear too.
+  const clearOf = [...document.querySelectorAll('[data-world-lights], h1, h2')];
 
   // Motion is off for the OS reduced-motion setting and for the page's own pause control (data-motion="off").
   const still = () => reducedQuery.matches || document.documentElement.dataset.motion === 'off';
