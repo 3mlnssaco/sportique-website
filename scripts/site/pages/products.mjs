@@ -12,7 +12,7 @@ const hero = pageHero({
 
 const app = section({
   id: 'uniqdata-app', label: 'live-app-title',
-  body: head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('지금 스토어에서', '내려받는 UniQdata.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 스토어에 공개된 실제 앱 화면입니다.', extra: storeButtons }) + appTile(),
+  body: head({ tag: 'UniQdata 앱', id: 'live-app-title', title: lines('지금 스토어에서', '내려받는 UniQdata.'), lead: 'UniQdata는 2026년 7월 App Store와 Google Play에 출시해 운영 중인 개인 건강관리 앱입니다. 아래는 준비 중인 다음 버전의 화면입니다.', extra: storeButtons }) + appTile(),
 });
 
 const product = p => section({

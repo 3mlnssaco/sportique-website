@@ -143,6 +143,42 @@
       "sha256": "20f9dfe4c26cc3ad23b6a9e2c803ff9e31b6209af700da0020416e759a082f0e",
       "transformation": "Converted 645x1398 PNG to WebP quality 84; pixels otherwise unchanged.",
       "privacy_review": "Store marketing frame with example persona and placeholder values (e.g. '000 님'); no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-next-connect-20261124.png",
+      "type": "next-version design reference screen (not a screenshot of the released app)",
+      "source": "UniQdata app screen design reference file, Connect frame, exported at 1x on 2026-11-24",
+      "sha256": "7249f1d2e6b5eff7ea14364197ce72a19b439424abbb47afd48d37c58b7e2eb6",
+      "transformation": "PNG export at 1x (375 px wide); no pixel edits.",
+      "publication_note": "Design of the next version, which is not released. It is not a capture of the released app and differs from the version in the stores (1.0.18). Names and values shown on the screen are examples.",
+      "privacy_review": "Design file content with example names and values; no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-next-routine-20261124.png",
+      "type": "next-version design reference screen (not a screenshot of the released app)",
+      "source": "UniQdata app screen design reference file, Routine frame, exported at 1x on 2026-11-24",
+      "sha256": "0e67f08663b93b8be46d1c3203adaff44e41c52e091122b914983dce89b02cbd",
+      "transformation": "PNG export at 1x (375 px wide); no pixel edits.",
+      "publication_note": "Design of the next version, which is not released. It is not a capture of the released app and differs from the version in the stores (1.0.18). Names and values shown on the screen are examples.",
+      "privacy_review": "Design file content with example names and values; no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-next-report-20261124.png",
+      "type": "next-version design reference screen (not a screenshot of the released app)",
+      "source": "UniQdata app screen design reference file, Report frame, exported at 1x on 2026-11-24",
+      "sha256": "50dc10f3edf63fba755096af00571c2cda100527f59cba9e951429a52055a2a2",
+      "transformation": "PNG export at 1x (375 px wide); no pixel edits.",
+      "publication_note": "Design of the next version, which is not released. It is not a capture of the released app and differs from the version in the stores (1.0.18). Names and values shown on the screen are examples.",
+      "privacy_review": "Design file content with example names and values; no real user record, account identifier or credential visible."
+    },
+    {
+      "public_path": "/assets/verified/uniqdata-next-vault-20261124.png",
+      "type": "next-version design reference screen (not a screenshot of the released app)",
+      "source": "UniQdata app screen design reference file, Vault frame, exported at 1x on 2026-11-24",
+      "sha256": "7fae8ea5f795b39da015b1657ef6608efdbcbade56fe442d458f15359c8f2140",
+      "transformation": "PNG export at 1x (375 px wide); no pixel edits.",
+      "publication_note": "Design of the next version, which is not released. It is not a capture of the released app and differs from the version in the stores (1.0.18). Names and values shown on the screen are examples.",
+      "privacy_review": "Design file content with example names and values; no real user record, account identifier or credential visible."
     }
   ],
   "blocked_assets": [

@@ -280,16 +280,19 @@ main > .section:last-child { padding-bottom: var(--section); }
 .store-button small { color: var(--muted); font-size: 11px; font-weight: 500; }
 .store-button strong { font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
 
-/* App shot: the store screenshot is a full marketing frame; the clip path (ui.mjs appShotDefs) keeps the phone only. */
-.app-shot {
-  position: relative; aspect-ratio: 440 / 754; overflow: hidden;
-  filter: drop-shadow(0 0 1px rgba(237, 243, 255, .4)) drop-shadow(0 26px 44px rgba(0, 0, 0, .6));
+/* Phone frame (phone() in ui.mjs): the exported screens have no device bezel, so it is drawn here. Tall screens show their top part only. */
+.phone {
+  position: relative; aspect-ratio: 375 / 812; padding: 2.7%; border-radius: 13.5% / 6.3%;
+  background: #0b0d12;
+  box-shadow: inset 0 0 0 1px rgba(237, 243, 255, .18), 0 26px 44px rgba(0, 0, 0, .6);
+  overflow: hidden;
 }
-.app-shot img {
-  position: absolute; left: -23.86%; top: -56.76%; width: 146.59%; max-width: none; height: auto;
-  clip-path: url(#app-shot-phone);
+.phone img {
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 11% / 5.1%;
+  /* Tall screens are cut wherever the frame ends, so the last part fades out instead of slicing a row of text. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 76%, transparent 99%);
 }
-.app-shot .app-shot-img--report { clip-path: url(#app-shot-report); }
 
 @media (prefers-reduced-motion: no-preference) {
   .btn, .btn-arrow, .link, .tile--link, .tile-mark, .store-button, .language-switch, .header-login, .site-nav a, .footer-nav a, .footer-mail, .motion-toggle {
@@ -313,17 +316,17 @@ main > .section:last-child { padding-bottom: var(--section); }
   .split--top { align-items: start; }
 }
 
-/* App tile (appTile() in ui.mjs): five phones in one tile; even ones sit 28px lower. */
+/* App tile (appTile() in ui.mjs): four phones in one tile; even ones sit 28px lower. The row is capped so one phone stays under 230px wide. */
 .shots {
-  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 28px);
-  margin: 0; padding: clamp(28px, 4vw, 48px) clamp(18px, 3.4vw, 40px) clamp(28px, 4vw, 44px); list-style: none;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 28px);
+  max-width: 1084px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 3.4vw, 40px) clamp(28px, 4vw, 44px); list-style: none;
 }
 .shots li:nth-child(even) { margin-top: 28px; }
 .shots figure { display: grid; gap: 18px; }
-.shots figcaption { display: grid; gap: 4px; }
 .shots figcaption strong { color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
-.shots figcaption span { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .tile + .note { margin-top: 16px; }
+.note + .note { margin-top: 4px; }
+.app-tile .tile-bar { color: var(--ink-2); font-size: 13px; }
 
 @media (max-width: 900px) {
   .shots {
@@ -332,7 +335,6 @@ main > .section:last-child { padding-bottom: var(--section); }
   }
   .shots li { flex: 0 0 min(56%, 280px); scroll-snap-align: start; }
   .shots li:nth-child(even) { margin-top: 0; }
-  .app-shot { overflow: hidden; } /* keeps the unclipped image box out of the scroll width */
 }
 
 /* Rows (rows() in ui.mjs): plain ruled rows, title left and content right. */
@@ -536,6 +538,8 @@ main > .section:last-child { padding-bottom: var(--section); }
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px);
   width: min(440px, 100%); margin: 0 auto calc(-1 * clamp(36px, 5vw, 64px)); padding: 40px var(--pad) 0;
 }
+/* The label sits above the phones, because the tile's bottom edge cuts them. */
+.product-shots-note { grid-column: 1 / -1; margin-bottom: -4px; text-align: center; text-wrap: balance; }
 @media (min-width: 901px) {
   .product-tile { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: end; }
   .product-copy { align-self: center; padding: var(--pad) clamp(24px, 3vw, 40px) var(--pad) var(--pad); }

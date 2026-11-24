@@ -10,7 +10,7 @@ const home = read('index.html');
 const css = read(SITE_CSS);
 const rules = cssRules(css);
 const firstScreen = block(mainOf(home), '<section');
-const storeShot = /^\/assets\/verified\/uniqdata-appstore-(?:home|ai-chat|report|routine|checkin)-20260926\.webp$/;
+const nextShot = /^\/assets\/verified\/uniqdata-next-(?:connect|routine|report|vault)-20261124\.png$/;
 const images = html => [...html.matchAll(/<img\b[^>]*\ssrc="([^"]+)"/g)].map(match => match[1]);
 
 test('home leads with the UniQdata statement and keeps every company route, the product site and the institution login', () => {
@@ -22,12 +22,12 @@ test('home leads with the UniQdata statement and keeps every company route, the 
   // The old caption "기록은 한곳에, 활용과 공유의 선택은 개인에게" left with the concept diagram; the statement itself is the title and the h1.
   assert.ok(home.includes('<title>SportiQue — 건강기록은 한곳에, 선택은 개인에게</title>'));
   assert.match(firstScreen, twoLines('건강기록은 한곳에.', '선택은 개인에게.'));
-  // The old check asked for the UniQdata concept diagram here. UniQdata is now shown by its heading, its site link and real store screens.
+  // The old check asked for the UniQdata concept diagram here. UniQdata is now shown by its heading, its site link and two next-version screens, labelled as such.
   const products = block(home, 'id="products"');
   assert.match(products, twoLines('개인 건강기록의', '현재 시작점, UniQdata.'));
   assert.ok(products.includes('href="https://uniqdata.io/"'));
-  assert.ok(images(products).length > 0);
-  for (const src of images(products)) assert.match(src, storeShot);
+  assert.deepEqual(images(products), ['/assets/verified/uniqdata-next-connect-20261124.png', '/assets/verified/uniqdata-next-report-20261124.png']);
+  assert.ok(products.includes('>준비 중인 다음 버전의 화면입니다. 화면 속 이름과 수치는 예시입니다.</p>'), 'the tile labels its screens as next-version screens and as examples');
   for (const retired of ['/assets/verified/uniqdata-home-dev-20260916.png', '/assets/verified/uniqdata-screen-20260922.webp', '/assets/generated/personal-data-vault-v1.png', 'class="assembly-links"', 'class="record-fragment"', 'hero-3d-phase', 'class="world-hero"', 'id="footprint-map"', 'holo-stage', 'value-visual', 'value-diagram']) assert.ok(!home.includes(retired), retired);
   assert.ok(!exists('assets/generated/personal-data-vault-v1.png'));
   assert.ok(home.includes('id="world"'));
@@ -302,18 +302,18 @@ test('pages read without scripts and nothing moves for a visitor who asked for r
   assert.doesNotMatch(css, /outline(?:-width)?\s*:\s*(?:none|0)\b/);
 });
 
-test('product pages show only the registered store screens: no withdrawn hardware, mock screen or concept diagram', () => {
+test('product pages show only the registered next-version screens: no withdrawn hardware, mock screen or concept diagram', () => {
   for (const asset of ['yakson-evt-v3-frame-20260916.png', 'yakson-evt-v3-preview-20260916.mp4']) assert.ok(exists(`assets/verified/${asset}`), asset);
   const withScreens = ['', 'products/', 'products/uniqdata/'];
   for (const { prefix } of languages) for (const path of ['', 'products/', ...productIds.map(id => `products/${id}/`), 'products/uniqdata/now/']) {
     const file = fileOf(prefix, path), page = read(file), main = mainOf(page);
     for (const rejected of ['lab-window', 'lab-chart', 'care-orbit', 'care-center', 'device-sculpture', 'product-jump', 'value-visual', 'value-diagram', '2026.09 개방형 기구 V3 · 디지털 검토본', '완성 외관·실물 반복 작동·제조 적합성은 검증 전입니다']) assert.ok(!page.includes(rejected), `${file}: ${rejected}`);
-    // Nothing is drawn to look like an app: the only pictures are the five App Store screens, on the pages that show UniQdata.
-    for (const src of images(main)) assert.match(src, storeShot, file);
+    // Nothing is drawn to look like an app: the only pictures are the next-version screens, on the pages that show UniQdata.
+    for (const src of images(main)) assert.match(src, nextShot, file);
     assert.equal(images(main).length > 0, withScreens.includes(path), `${file}: screens`);
     if (path) {
       assert.doesNotMatch(main, /<(?:canvas|video|picture|object|iframe)\b/, file);
-      for (const [svg] of main.matchAll(/<svg\b[^>]*>/g)) assert.match(svg, /^<svg width="0" height="0" aria-hidden="true"/, `${file}: only the clip-path definitions`);
+      assert.doesNotMatch(main, /<svg\b|clipPath/, `${file}: the phones are plain images in a css frame`);
     }
   }
   // The pictures set aside earlier (development captures, the UniQLab table, the Bodab capture, the withdrawn hardware) are on no page at all.
@@ -422,15 +422,15 @@ test('awards swap the Mongolia visit and incorporation cards while preserving th
 });
 
 test('legal and medical qualifiers stay on the pages they qualify, in Korean and in English', () => {
-  const exampleScreens = 'App Store 등록 화면(버전 1.0.18). 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
-  const notDiagnosis = ['궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.', '쌓인 기록을 AI와 함께 비진단 요약으로 확인합니다.'];
+  const exampleScreens = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+  const notDiagnosis = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
   const sharingDesign = ['SportiQue의 공유 아키텍처는 개인의 기록 보관, 동의와 권한, 블록체인 기반 증빙 검증을 분리합니다. 건강기록 원문과 복호화 키를 공개 원장에 올리는 방식이 아닙니다.', '수신자의 권한과 키를 확인하고, 허용된 범위의 암호화 전달을 연결하는 설계입니다.'];
   const studyAccess = 'UniQLab.io에서는 참여자가 동의한 연구 목적과 범위 안에서 기록을 연결합니다. 기관 계정만으로 개인 기록에 접근할 수 있는 것은 아닙니다.';
   const familyAccess = 'Bodab에서 남긴 기록은 어르신이 허용한 범위 안에서 가족과 연결됩니다. 가족 공유와 기관의 돌봄 업무 권한은 구분됩니다.';
   const qualifiers = {
-    '': [exampleScreens, ...notDiagnosis, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
-    'products/': [exampleScreens, ...notDiagnosis, ...sharingDesign, studyAccess, familyAccess, '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.'],
-    'products/uniqdata/': [exampleScreens, ...notDiagnosis, ...sharingDesign],
+    '': [exampleScreens, notDiagnosis, '모든 활용은 개인이 정한 대상·목적·범위·기간과 국가별 정책 조건 안에서만 이뤄집니다.', '국가별 정책·데이터 레지던시 조건을 통과한 범위에서, 허용한 기록만 필요한 곳에 연결합니다.', '연구 목적과 요청 항목·기간을 보고 직접 선택합니다. 참여 보상은 연구기관·PI 등 지급 주체가 정한 방식으로 처리되고, 개인은 관련 이력을 확인합니다.'],
+    'products/': [exampleScreens, notDiagnosis, ...sharingDesign, studyAccess, familyAccess, '개인이 연구 참여와 공유 범위를 선택한 뒤 연결되는 활용처입니다.'],
+    'products/uniqdata/': [exampleScreens, notDiagnosis, ...sharingDesign],
     'products/uniqlab/': [...sharingDesign, studyAccess, '연구팀과 기관을 위한 운영 도구입니다. 개인의 기록은 동의한 목적과 범위 밖으로 자동 공유되지 않습니다.'],
     'products/bodab/': [...sharingDesign, familyAccess, 'Bodab은 개인이 쓰는 어르신용 앱입니다. 기관의 돌봄 요청·담당자 배정 업무는 Bodab Senior에서 별도로 설명합니다.'],
     'products/uniqdata/now/': ['모든 숫자는 서버가 센 실제 값이에요. 개인을 알아볼 수 있는 정보는 없어요.'],
@@ -443,8 +443,8 @@ test('legal and medical qualifiers stay on the pages they qualify, in Korean and
     const file = fileOf(prefix, path), page = read(file);
     for (const sentence of sentences) assert.ok(page.includes(said(sentence, lang)), `${file}: ${sentence}`);
   }
-  // Wording the English must keep, whatever else changes in the translation.
-  for (const [path, phrases] of Object.entries({ '': ['not real user records', 'does not replace a diagnosis', 'non-diagnostic'], 'products/uniqlab/': ['decryption keys stay outside the public ledger', 'does not grant access to personal records', 'not automatically shared'], 'about/': ['remain to be tested in the pilot', 'assessed against local policies'], 'vision/': ['assessed against local policies and data storage requirements'], 'founder/': ['AI-retouched photo', 'retouched with AI'] })) {
+  // Wording the English must keep, whatever else changes in the translation. 'non-diagnostic' is not kept: that sentence left with the old report screen, and one sentence now qualifies the report and the AI answers together.
+  for (const [path, phrases] of Object.entries({ '': ['not real user records', 'does not replace a diagnosis'], 'products/': ['does not replace a diagnosis'], 'products/uniqdata/': ['does not replace a diagnosis'], 'products/uniqlab/': ['decryption keys stay outside the public ledger', 'does not grant access to personal records', 'not automatically shared'], 'about/': ['remain to be tested in the pilot', 'assessed against local policies'], 'vision/': ['assessed against local policies and data storage requirements'], 'founder/': ['AI-retouched photo', 'retouched with AI'] })) {
     const page = read(fileOf('en/', path));
     for (const phrase of phrases) assert.ok(page.includes(phrase), `en/${path}: ${phrase}`);
   }

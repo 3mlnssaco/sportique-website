@@ -50,33 +50,33 @@ export function tile({ bar, body, className = '', element = 'div', attrs = '' })
   return `<${element} class="tile${className ? ` ${className}` : ''}"${attrs}>${top}${body}</${element}>`;
 }
 
-// Live store listings and their published screenshots (see assets/verified/asset-provenance.json).
+// Live store listings.
 export const appStore = 'https://apps.apple.com/kr/app/uniqdata/id6760312240';
 export const playStore = 'https://play.google.com/store/apps/details?id=io.uniqdata.app';
 export const storeButtons = `<div class="store-buttons"><a class="store-button" lang="en" href="${appStore}" target="_blank" rel="noopener noreferrer"><small>Download on the</small><strong>App Store</strong></a><a class="store-button" lang="en" href="${playStore}" target="_blank" rel="noopener noreferrer"><small>GET IT ON</small><strong>Google Play</strong></a></div>`;
+// Screens of the next UniQdata version: design reference images, not captures of the released app
+// (see assets/verified/asset-provenance.json). They are always shown with the "next version" label and the notice below.
 export const appShots = [
-  ['home', '홈 · 기록 추가', '수기 기록, 사진 촬영, 파일 업로드로 흩어진 기록을 모읍니다.'],
-  ['ai-chat', 'UniQdata AI', '궁금한 건강정보를 대화로 확인합니다. 진단을 대신하지 않습니다.'],
-  ['report', '리포트', '쌓인 기록을 AI와 함께 비진단 요약으로 확인합니다.'],
-  ['routine', '루틴 추천', '나에게 맞는 루틴을 골라 일정에 넣고 실천합니다.'],
-  ['checkin', '체크인', '정해진 시간마다 오늘의 컨디션을 남깁니다.'],
+  ['connect', '연결'],
+  ['routine', '루틴'],
+  ['report', '리포트'],
+  ['vault', '보관함'],
 ];
+export const appShotNotice = '준비 중인 다음 버전의 디자인이며, 지금 스토어의 앱(버전 1.0.18)과 화면이 다릅니다. 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.';
+export const notDiagnosisNotice = '리포트와 AI 답변은 진단을 대신하지 않습니다.';
+export const appShotShortNotice = '준비 중인 다음 버전의 화면입니다. 화면 속 이름과 수치는 예시입니다.';
 
-// The store screenshots are full marketing frames; these clip paths cut out the phone only.
-// Put this once per page, before the first appShot().
-export const appShotDefs = '<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs><clipPath id="app-shot-phone" clipPathUnits="objectBoundingBox"><rect x=".2186" y=".3119" width=".5628" height=".5279" rx=".0868" ry=".0401"/></clipPath><clipPath id="app-shot-report" clipPathUnits="objectBoundingBox"><rect x=".2186" y=".3119" width=".5628" height=".5279" rx=".0868" ry=".0401"/><rect x=".1705" y=".4313" width=".6651" height=".3505" rx=".0124" ry=".0057"/></clipPath></defs></svg>';
-
-export function appShot(id) {
+// Phone frame drawn in css (.phone): the exported screens have no device bezel. Tall screens show their top part only.
+export function phone(id) {
   const shot = appShots.find(([key]) => key === id);
-  if (!shot) throw new Error(`Unknown app shot: ${id}`);
-  return `<div class="app-shot"><img class="app-shot-img app-shot-img--${id}" src="/assets/verified/uniqdata-appstore-${id}-20260926.webp" alt="UniQdata 앱 화면: ${esc(shot[1])}" width="645" height="1398" loading="lazy"></div>`;
+  if (!shot) throw new Error(`Unknown app screen: ${id}`);
+  return `<div class="phone"><img src="/assets/verified/uniqdata-next-${id}-20261124.png" alt="UniQdata 다음 버전 화면: ${esc(shot[1])}" width="375" height="812" loading="lazy" decoding="async"></div>`;
 }
 
-// App tile: the five store screens in one tile (the home page "UniQdata app" tile), with the clip-path defs the
-// screens need and the example-screen note below. Use once per page; it already includes appShotDefs.
-export function appTile({ bar = ['App Store 등록 화면', '버전 1.0.18'], note = 'App Store 등록 화면(버전 1.0.18). 화면 속 이름과 수치는 예시이며 실제 사용자의 기록이 아닙니다.' } = {}) {
-  const shots = `<ul class="shots" tabindex="0" aria-label="${esc(bar[0])}">${appShots.map(([id, title, body]) => `<li><figure>${appShot(id)}<figcaption><strong>${esc(title)}</strong><span>${esc(body)}</span></figcaption></figure></li>`).join('')}</ul>`;
-  return `${appShotDefs}${tile({ bar, body: shots })}${note ? `<p class="note">${esc(note)}</p>` : ''}`;
+// App tile: the four next-version screens in one tile, with the notice below. Use once per page.
+export function appTile({ bar = ['다음 버전 화면', '준비 중'], note = appShotNotice } = {}) {
+  const shots = `<ul class="shots" tabindex="0" aria-label="${esc(bar[0])}">${appShots.map(([id, title]) => `<li><figure>${phone(id)}<figcaption><strong>${esc(title)}</strong></figcaption></figure></li>`).join('')}</ul>`;
+  return `${tile({ bar, body: shots, className: 'app-tile' })}${note ? `<p class="note">${esc(note)}</p>` : ''}<p class="note">${esc(notDiagnosisNotice)}</p>`;
 }
 
 // First block of a page: tag, h1 (two lines via lines()), lead (640px wide), optional buttons. Left aligned, no backdrop text.

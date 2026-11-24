@@ -14,17 +14,17 @@
   .split--top { align-items: start; }
 }
 
-/* App tile (appTile() in ui.mjs): five phones in one tile; even ones sit 28px lower. */
+/* App tile (appTile() in ui.mjs): four phones in one tile; even ones sit 28px lower. The row is capped so one phone stays under 230px wide. */
 .shots {
-  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 28px);
-  margin: 0; padding: clamp(28px, 4vw, 48px) clamp(18px, 3.4vw, 40px) clamp(28px, 4vw, 44px); list-style: none;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 28px);
+  max-width: 1084px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 3.4vw, 40px) clamp(28px, 4vw, 44px); list-style: none;
 }
 .shots li:nth-child(even) { margin-top: 28px; }
 .shots figure { display: grid; gap: 18px; }
-.shots figcaption { display: grid; gap: 4px; }
 .shots figcaption strong { color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
-.shots figcaption span { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .tile + .note { margin-top: 16px; }
+.note + .note { margin-top: 4px; }
+.app-tile .tile-bar { color: var(--ink-2); font-size: 13px; }
 
 @media (max-width: 900px) {
   .shots {
@@ -33,7 +33,6 @@
   }
   .shots li { flex: 0 0 min(56%, 280px); scroll-snap-align: start; }
   .shots li:nth-child(even) { margin-top: 0; }
-  .app-shot { overflow: hidden; } /* keeps the unclipped image box out of the scroll width */
 }
 
 /* Rows (rows() in ui.mjs): plain ruled rows, title left and content right. */
