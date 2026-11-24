@@ -528,6 +528,9 @@ main > .section:last-child { padding-bottom: var(--section); }
 /* Network: three principles as ruled lines. */
 .rules { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .rules li { padding: 20px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 18px; font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+.ledger-fact { display: grid; justify-items: start; gap: 10px; max-width: 560px; padding-left: 16px; border-left: 1px solid var(--line-2); }
+.ledger-fact .tag { padding: 3px 10px; font-size: 12px; white-space: nowrap; }
+.ledger-fact p:not(.tag) { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.65; }
 
 /* What opens: seven uses as a ruled two-column list. */
 .pairs { display: grid; column-gap: var(--split-gap); margin: 0; padding: 0; list-style: none; }
