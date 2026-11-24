@@ -18,7 +18,7 @@ function browser({ lang = 'ko', reduced = false, motion, forced = false, stored,
     };
   };
   const context = paint => ({ createImageData: (width, height) => ({ data: new Uint8ClampedArray(width * height * 4) }), putImageData: paint });
-  const canvas = { classes: new Set(), classList: { add: name => canvas.classes.add(name) }, style: {}, getContext: () => (canvas.context ??= context(() => { env.paints++; })) };
+  const canvas = { classes: new Set(), classList: { add: name => canvas.classes.add(name) }, style: {}, getContext: () => (canvas.context ??= context(image => { env.paints++; env.picture = image; })) };
   const host = { querySelector: selector => (selector === 'canvas' ? canvas : null), insertBefore: node => { env.haze = node; } };
   const root = { lang, dataset: motion ? { motion } : {}, scrollHeight: 4000 };
   const button = { ...target('switch'), attributes: {}, dataset: {}, textContent: '', setAttribute(name, value) { this.attributes[name] = value; } };
@@ -136,6 +136,29 @@ test('backdrop: the motion switch (html[data-motion=off]) is followed both ways'
   assert.equal(env.paints, moving + 1, 'one still picture');
   env.run(1);
   assert.equal(env.paints, moving + 1);
+});
+
+test('backdrop: single dots switch on while it moves, and a still picture has none', async () => {
+  // The colours sparks and links are painted in; the slow lights only ever give blends of other colours.
+  const colours = [[237, 243, 255], [89, 223, 241], [164, 135, 255]];
+  const lit = ({ data }) => { let n = 0; for (let i = 0; i < data.length; i += 4) if (data[i + 3] > 60 && colours.some(([r, g, b]) => data[i] === r && data[i + 1] === g && data[i + 2] === b)) n++; return n; };
+  const moving = browser();
+  (await stage())();
+  assert.equal(lit(moving.picture), 0, 'the first picture, before anything has moved');
+  moving.run(4);
+  assert.ok(lit(moving.picture) > 0, 'dots are lit after four seconds');
+  // Stopping the motion while dots are lit leaves a still picture without them, and so does starting still.
+  moving.setMotion('off');
+  assert.equal(lit(moving.picture), 0, 'none left after the switch');
+  moving.setMotion();
+  moving.run(4);
+  assert.ok(lit(moving.picture) > 0, 'and they come back with the motion');
+  for (const options of [{ reduced: true }, { motion: 'off' }]) {
+    const still = browser(options);
+    (await stage())();
+    still.run(4);
+    assert.equal(lit(still.picture), 0, JSON.stringify(options));
+  }
 });
 
 test('backdrop: nothing is drawn in forced colours', async () => {

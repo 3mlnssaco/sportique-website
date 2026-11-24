@@ -176,7 +176,8 @@ export function mountStage() {
       const angle = chance() * 2 * Math.PI, reach = 12 + chance() * 46;
       const tc = Math.round(from.c + Math.cos(angle) * reach), tr = Math.round(from.wr + Math.sin(angle) * reach);
       const fromRow = from.wr - worldRow, toRow = tr - worldRow;
-      if (t >= from.born && fromRow >= 0 && fromRow < rows && tc >= 0 && tc < cols && toRow >= 0 && toRow < rows) {
+      const lit = t >= from.born && t < from.born + from.life;
+      if (lit && fromRow >= 0 && fromRow < rows && tc >= 0 && tc < cols && toRow >= 0 && toRow < rows) {
         const steps = Math.max(Math.abs(tc - from.c), Math.abs(tr - from.wr), 1);
         links.push({ c0: from.c, r0: from.wr, c1: tc, r1: tr, steps, born: t, color: from.color });
         c = tc; wr = tr; born = t + steps / LINK_SPEED; color = from.color;
@@ -227,7 +228,8 @@ export function mountStage() {
       if (age >= 1 || r < -40 || r > rows + 40) { sparks.splice(i, 1); continue; }
       if (age < 0 || r < 0 || r >= rows) continue;
       const level = sparkLevel(age) * intro, k = kcol[s.c];
-      const a = (0.5 + 0.45 * k) * level, side = a * 0.34;
+      // Over the text column (k = 0 on wide screens) a spark stays dim, so the text keeps its contrast.
+      const a = (0.34 + 0.6 * k) * level, side = a * 0.34;
       put(s.c, r, s.color, a);
       put(s.c - 1, r, s.color, side); put(s.c + 1, r, s.color, side);
       put(s.c, r - 1, s.color, side); put(s.c, r + 1, s.color, side);

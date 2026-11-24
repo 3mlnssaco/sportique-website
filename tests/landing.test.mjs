@@ -106,7 +106,7 @@ test('home defines scattered records as the problem and leaves the choice of AI 
   const system = block(home, 'id="system"');
   const steps = [...block(system, '<ol').matchAll(/<li>([\s\S]*?)<\/li>/g)].map(match => visibleText(match[1]));
   assert.equal(steps.length, 3);
-  for (const [index, start] of ['1 DataQ 형식을 표준화합니다.', '2 UniQdata 개인 DB로 쌓습니다.', '3 Choose AI·공유를 선택합니다.'].entries()) assert.ok(steps[index].startsWith(start), steps[index]);
+  for (const [index, start] of ['1 DataQ 형식을 표준화합니다.', '2 UniQdata 개인 DB로 쌓습니다.', '3 선택 AI·공유를 선택합니다.'].entries()) assert.ok(steps[index].startsWith(start), steps[index]);
   assert.doesNotMatch(system, /confirm/i);
   assert.ok(!home.includes('다시 입력하지'));
   assert.ok(visibleText(block(home, 'id="routes-title"')).includes('자유'));

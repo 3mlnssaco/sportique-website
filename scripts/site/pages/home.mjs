@@ -34,7 +34,7 @@ const problem = `<section class="section" id="problem" aria-labelledby="problem-
 const steps = [
   ['DataQ', '형식을 표준화합니다.', '원본과 출처를 보존하면서 서로 다른 형식·항목·단위를 공통 구조로 연결합니다.'],
   ['UniQdata', '개인 DB로 쌓습니다.', '건강기록을 한곳에서 관리하고, 시간에 따라 다시 활용합니다.'],
-  ['Choose', 'AI·공유를 선택합니다.', '어디에, 어떤 AI 모델·플랫폼에, 어떤 목적으로, 어느 범위와 기간까지 쓸지 개인이 정합니다.'],
+  ['선택', 'AI·공유를 선택합니다.', '어디에, 어떤 AI 모델·플랫폼에, 어떤 목적으로, 어느 범위와 기간까지 쓸지 개인이 정합니다.'],
 ];
 const system = `<section class="section" id="system" aria-labelledby="system-title"><div class="wrap">${head({ tag: '방식', id: 'system-title', title: lines('데이터를 개인에게.', '선택권도 개인에게.'), lead: 'DataQ는 출처마다 다른 건강데이터의 형식·항목·단위를 표준화합니다. UniQdata는 기록을 개인 DB에서 관리하고, 개인이 활용과 공유 범위를 정하는 접점입니다.' })}<ol class="steps">${steps.map(([name, title, body], index) => `<li><span class="step-n" aria-hidden="true">${index + 1}</span><div class="step-body"><p class="step-name">${name}</p><h3>${esc(title)}</h3><p>${esc(body)}</p></div></li>`).join('')}</ol></div></section>`;
 
